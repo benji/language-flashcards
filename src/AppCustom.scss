@@ -54,10 +54,11 @@ label {
   clear:both;
 }
 
-.l-nav-link {
-  font-size: 20px;
-  color: $font-color;
+.l-icon-action {
+  color: $font-color !important;
+  font-size: 18px !important;
 }
-.l-nav-link:hover {
+.l-icon-action:hover {
   cursor: pointer;
+  color: $primary-color !important;
 }

@@ -46,7 +46,7 @@ function Flashcard(props) {
       .then(id => {
         entry.id = id;
         setflashcardEntries([...flashcardEntries, entry]);
-        AppContext.flashcardEntries[flashcardName].push(entry)
+        AppContext.flashcardEntries[flashcardName].push(entry);
         setNewEntryFrom("");
         setNewEntryTo("");
         setNewEntryPronounciation("");
@@ -75,20 +75,26 @@ function Flashcard(props) {
     };
   }
 
+  function deleteEntry(id) {
+    return () => {
+      flash_store
+        .deleteFlashcardEntry(flashcardName, id)
+        .then(r => {
+          var newEntries = flashcardEntries.filter(function(entry) {
+            return entry.id !== id;
+          });
+          AppContext.flashcardEntries[flashcardName] = newEntries;
+          setflashcardEntries(newEntries);
+        })
+        .catch(AppContext.handleError);
+    };
+  }
+
   return (
     <React.Fragment>
       <h3>Flashcard {flashcardName}</h3>
 
       <Row>
-        <Col>
-          <Button className="quizz_button" onClick={startQuizz(true)}>
-            <FontAwesomeIcon icon={faPlay} />
-            <br />
-            {LanguagesService.from()}{" "}
-            <FontAwesomeIcon icon={faArrowRight} size="sm" />{" "}
-            {LanguagesService.to()}
-          </Button>
-        </Col>
         <Col>
           <Button className="quizz_button" onClick={startQuizz(false)}>
             <FontAwesomeIcon icon={faPlay} />
@@ -98,7 +104,17 @@ function Flashcard(props) {
             {LanguagesService.from()}
           </Button>
         </Col>
+        <Col>
+          <Button className="quizz_button" onClick={startQuizz(true)}>
+            <FontAwesomeIcon icon={faPlay} />
+            <br />
+            {LanguagesService.from()}{" "}
+            <FontAwesomeIcon icon={faArrowRight} size="sm" />{" "}
+            {LanguagesService.to()}
+          </Button>
+        </Col>
       </Row>
+      <div className="clearfix"></div>
 
       <Form onSubmit={addFlashcardEntry} className="add-entry-form">
         <Form.Label>New Entry</Form.Label>
@@ -146,7 +162,11 @@ function Flashcard(props) {
                     <td>{e.to}</td>
                     <td>{e.p}</td>
                     <td>
-                      <FontAwesomeIcon icon={faTrashAlt} />
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        className="l-icon-action"
+                        onClick={deleteEntry(e.id)}
+                      />
                     </td>
                   </tr>
                 );

@@ -25,14 +25,18 @@ function Header(props) {
     <div style={styles}>
       {props.configuration ? (
         <Link to={`/configure`} style={linkStyle}>
-          <FontAwesomeIcon icon={faSlidersH} className="l-nav-link" />
+          <FontAwesomeIcon icon={faSlidersH} className="l-icon-action" />
         </Link>
       ) : (
-        <>Learn a new Language!</>
+        <></>
       )}
       {props.isAuthenticated ? (
         <a onClick={logout} className="headerLink" style={linkStyle}>
-          <FontAwesomeIcon icon={faSignOutAlt} className="l-nav-link" />
+          <FontAwesomeIcon
+            icon={faSignOutAlt}
+            className="l-icon-action"
+            size="md"
+          />
         </a>
       ) : (
         <></>

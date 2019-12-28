@@ -27,7 +27,8 @@ function App() {
   const [error, setError] = useState();
 
   AppContext.handleError = function(e) {
-    console.log(e);
+    console.error(e);
+    setReady(true);
     setError(e);
   };
 

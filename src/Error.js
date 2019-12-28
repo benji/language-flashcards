@@ -1,19 +1,24 @@
 import React from "react";
+import PageTitle from "./PageTitle";
 
 export default function Error(props) {
   console.log("Error()");
   console.log(props);
 
   function errorMessage() {
-    if (props.error) return props.error.toString();
-    return "(No error message)";
+    const e = props.error;
+    if (!e) return "(No error message)";
+    if (e instanceof String) return e;
+    return JSON.stringify(e);
   }
 
   return (
     <>
-      Oh sh*t, I'm broken :(
-      <br />
-      {errorMessage()}
+      <div style={{ margin: "5em auto", color: "#ca0e0e" }}>
+        Oh sh*t, something bad happened :o(
+        <br />
+        {errorMessage()}
+      </div>
     </>
   );
 }

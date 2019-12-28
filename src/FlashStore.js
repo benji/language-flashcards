@@ -29,9 +29,11 @@ self.registerAuthenticationCallback = function(c) {
 
 self.getConfiguration = function() {
   try {
+    console.log('12312312312')
     return self
       ._listP()(store_configuration, {})
       .then(r => {
+        console.error("YOO",r)
         if (!r.data || r.data.length == 0) {
           return undefined;
         } else if (r.data.length > 1) {
@@ -45,8 +47,10 @@ self.getConfiguration = function() {
             to: e.userdata.to
           };
         } // otherwise return undefined
-      });
+      })
+      .catch(self._catchHttpError)
   } catch (e) {
+    console.error("YOO2",e)
     return Promise.reject(new Error(e));
   }
 };
@@ -57,7 +61,7 @@ self.saveConfiguration = function(configuration) {
 
     return self.getConfiguration().then(c => {
       if (c) {
-        return self.__updateP()(store_configuration, c.id, configuration);
+        return self._updateP()(store_configuration, c.id, configuration);
       } else {
         return self._createP()(store_configuration, configuration);
       }
@@ -87,11 +91,19 @@ self.addFlashcard = function(flashcard) {
 self.addFlashcardEntry = function(flashcardName, entry) {
   try {
     self._validateNames([flashcardName]);
-    self._validateKeys(entry);
     return self._createP()(
       self._getFlashcardsEntriesStore(flashcardName),
       entry
     );
+  } catch (e) {
+    return Promise.reject(new Error(e));
+  }
+};
+
+self.deleteFlashcardEntry = function(flashcardName, id) {
+  try {
+    self._validateNames([flashcardName, id]);
+    return self._removeP()(self._getFlashcardsEntriesStore(flashcardName), id);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
@@ -171,9 +183,17 @@ self._createP = function() {
   console.trace("_createP");
   return util.promisify(self.onestore.create.bind(self.onestore));
 };
-self.__updateP = function() {
+self._updateP = function() {
   return util.promisify(self.onestore.update.bind(self.onestore));
 };
+self._removeP = function() {
+  return util.promisify(self.onestore.remove.bind(self.onestore));
+};
+
+self._catchHttpError = function(e) {
+  if (e.status == 429) throw 'onestore.io API limit exceeded!'
+  return e;
+}
 
 self._validateNames = function(values) {
   for (var i in values) {
