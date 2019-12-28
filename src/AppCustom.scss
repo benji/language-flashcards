@@ -1,11 +1,30 @@
 @import 'common';
+html,
+body {
+  height: 100%;
+}
+#root, .App {
+  height: 100%;
+}
 
 body {
   max-width: 800px;
   margin: 0 auto;
   background: $background-color;
-  color: #4c4c4c;
+  color: $font-color;
 }
+
+.App {
+  position: relative;
+}
+
+.content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
 p,ul,li {
   color: #333;
 }
@@ -16,7 +35,7 @@ legend {
 
 h3 {
   font-size: 1.3rem;
-  padding: 8px;
+  padding: 8px 0;
   text-align: left;
 }
 label {
@@ -33,4 +52,12 @@ label {
 
 .clearfix {
   clear:both;
+}
+
+.l-nav-link {
+  font-size: 20px;
+  color: $font-color;
+}
+.l-nav-link:hover {
+  cursor: pointer;
 }

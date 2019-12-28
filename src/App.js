@@ -83,8 +83,7 @@ function App() {
             isAuthenticated={authenticated}
             configuration={configuration}
           />
-
-          {renderMe()}
+          <div className="content">{renderMe()}</div>
         </BrowserRouter>
       ) : (
         <>Loading...</>

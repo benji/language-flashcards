@@ -10,13 +10,14 @@ function logout() {
 }
 
 const styles = {
+  padding: "8px .5em",
   position: "absolute",
-  padding: "8px 0",
-  right: "0",
+  right: 0
 };
 
 const linkStyle = {
-  marginRight: "1em"
+  marginLeft: "1em",
+  color: "#333"
 };
 
 function Header(props) {
@@ -24,14 +25,14 @@ function Header(props) {
     <div style={styles}>
       {props.configuration ? (
         <Link to={`/configure`} style={linkStyle}>
-          <FontAwesomeIcon icon={faSlidersH} />
+          <FontAwesomeIcon icon={faSlidersH} className="l-nav-link" />
         </Link>
       ) : (
         <>Learn a new Language!</>
       )}
       {props.isAuthenticated ? (
         <a onClick={logout} className="headerLink" style={linkStyle}>
-          <FontAwesomeIcon icon={faSignOutAlt} />
+          <FontAwesomeIcon icon={faSignOutAlt} className="l-nav-link" />
         </a>
       ) : (
         <></>
