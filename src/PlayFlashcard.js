@@ -2,12 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { withRouter } from "react-router";
 import AppContext from "./AppContext";
 import Utils from "./Utils";
-import {
-  faPlay,
-  faTrashAlt,
-  faArrowRight
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./PlayFashcard.scss";
 
 var flashcardEntries;

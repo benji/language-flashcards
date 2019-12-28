@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { BrowserRouter, Route,Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 
 import flash_store from "./FlashStore";
@@ -55,13 +55,21 @@ function App() {
     if (!configuration) return <Configure />;
     return (
       <>
-      <Switch>
-        <Route exact path="/configure" component={Configure} />
-        <Route exact path="/flashcards" component={ListFlashcards} />
-        <Route exact path="/flashcards/:flashcard_name" component={Flashcard} />
-        <Route exact path="/flashcards/:flashcard_name/play" component={PlayFlashcard} />
-        <Route exact path="/" component={ListFlashcards} />
-        <Route path="/" component={NotFound} />
+        <Switch>
+          <Route exact path="/configure" component={Configure} />
+          <Route exact path="/flashcards" component={ListFlashcards} />
+          <Route
+            exact
+            path="/flashcards/:flashcard_name"
+            component={Flashcard}
+          />
+          <Route
+            exact
+            path="/flashcards/:flashcard_name/play"
+            component={PlayFlashcard}
+          />
+          <Route exact path="/" component={ListFlashcards} />
+          <Route path="/" component={NotFound} />
         </Switch>
       </>
     );
@@ -75,6 +83,7 @@ function App() {
             isAuthenticated={authenticated}
             configuration={configuration}
           />
+
           {renderMe()}
         </BrowserRouter>
       ) : (
