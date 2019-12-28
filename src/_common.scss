@@ -1,0 +1,9 @@
+$primary-color: #e46298;
+$secondary-color: #7A6563;
+$background-color: #E5D4CE;
+
+@mixin setLinkStyleAll {
+  &, &:hover, &:link, &:active, &:visited {
+        @content;
+    }
+}

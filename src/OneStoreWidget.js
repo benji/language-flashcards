@@ -1,8 +1,14 @@
 import React, { useState, useRef, Component } from "react";
 import ReactDOM from "react-dom";
-import "./App.css";
 import flash_store from "./FlashStore";
-import _OneStore from "onestore-client-node";
+
+let topStyles = {
+  textAlign: "right"
+};
+
+let containerStyles = {
+  display: "inline-block",
+};
 
 export class OneStoreWidget extends Component {
   // expected onAuthenticationChanged
@@ -12,8 +18,8 @@ export class OneStoreWidget extends Component {
 
   render() {
     return (
-      <div className="OneStoreWidget">
-        <div id="onestore-widget-container"></div>
+      <div className="OneStoreWidget" style={topStyles}>
+        <div id="onestore-widget-container" style={containerStyles}></div>
       </div>
     );
   }

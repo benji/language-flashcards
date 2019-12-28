@@ -1,42 +1,46 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./App.css";
 import flash_store from "./FlashStore";
-import _OneStore from "onestore-client-node";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
+import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import OneStoreWidget from "./OneStoreWidget";
 import { withRouter } from "react-router";
+import AppContext from "./AppContext";
 
 function ListFlashcards(props) {
   const languageName = props.match.params.language_name;
   const [flashcards, setFlashcards] = useState([]);
-  const [newFlashcardName, setNewFlashcardName] = useState('');
+  const [newFlashcardName, setNewFlashcardName] = useState("");
 
-  function onAuthenticationChanged() {
-    flash_store.listFlashcards(languageName).then(r => {
-      console.log("fetched flashcards:");
-      console.log(r);
-      setFlashcards(
-        r.data.map(r => {
-          return {
-            name: r.userdata.name,
-            id: r.id
-          };
-        })
-      );
-    });
-  }
+  useEffect(() => {
+    flash_store
+      .listFlashcards()
+      .then(r => {
+        console.log("fetched flashcards:");
+        console.log(r);
+        setFlashcards(
+          r.data.map(r => {
+            return { ...r.userdata, id: r.id };
+          })
+        );
+      })
+      .catch(AppContext.handleError);
+  }, []); //only once
 
   function addFlashcard(e) {
     e.preventDefault();
 
     if (flashcards.indexOf(newFlashcardName) < 0) {
-      flash_store.addFlashcard(languageName, newFlashcardName).then(id => {
-        setFlashcards([...flashcards, { name: newFlashcardName, id: id }]);
-        setNewFlashcardName('');
-      });
+      const flashcard = { name: newFlashcardName };
+      flash_store
+        .addFlashcard(flashcard)
+        .then(id => {
+          flashcard.id = id;
+          setFlashcards([...flashcards, flashcard]);
+          setNewFlashcardName("");
+        })
+        .catch(AppContext.handleError);
     } else {
       alert('Flashcard "' + newFlashcardName + '" already exist');
     }
@@ -49,14 +53,13 @@ function ListFlashcards(props) {
 
   return (
     <React.Fragment>
-      <OneStoreWidget onAuthenticationChanged={onAuthenticationChanged} />
-      <h2>Language: {languageName}</h2>
+      <h3>Flashcards</h3>
       <div className="ListFlashcards">
         <ul>
           {flashcards.map(f => {
             return (
               <li key={f.id}>
-                <Link to={`/language/${languageName}/flashcards/${f.name}`}>
+                <Link to={`/flashcards/${f.name}`}>
                   {f.name}
                 </Link>
               </li>
@@ -65,7 +68,7 @@ function ListFlashcards(props) {
         </ul>
 
         <form onSubmit={addFlashcard}>
-          New Flashcard:
+          <Form.Label>New Flashcard</Form.Label>
           <div className="d-flex flex-column">
             <InputGroup className="mb-3">
               <FormControl

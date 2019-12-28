@@ -1,0 +1,32 @@
+@import 'common';
+
+input {
+  margin-bottom: .2rem !important;
+}
+
+body {
+  background:red;
+}
+
+.quizz_button {
+  width: 100%;
+  padding: 1rem 0 !important;
+  font-size: 1rem !important;
+}
+
+.add-entry-form {
+  margin: 1em 0;
+}
+.add-entry-form button {
+  float:right;
+}
+
+table {
+  margin-top: 1em;
+  width: 100%;
+  background: #eaeaea;
+}
+table td, table th {
+  padding: .3em .5em;
+  border-bottom: 1px solid $background-color;
+}
