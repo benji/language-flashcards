@@ -4,10 +4,6 @@ input {
   margin-bottom: .2rem !important;
 }
 
-body {
-  background:red;
-}
-
 .quizz_button {
   width: 49%;
   padding: 1rem 0 !important;
@@ -31,4 +27,26 @@ table {
 table td, table th {
   padding: .3em .5em;
   border-bottom: 1px solid $background-color;
+}
+
+/* override react-super-responsive-table */
+@media screen and (max-width: 40em) {
+  .responsiveTable td .tdBefore {
+    display: inline !important;
+    width: unset !important;
+    position: unset !important;
+  }
+  .responsiveTable td .tdBefore::after {
+    content: ": ";
+  }
+  .responsiveTable td.deleteIcon .tdBefore::after {
+    content: "Remove: ";
+  }
+  
+  .responsiveTable td.pivoted {
+    padding-left: unset !important;
+  }
+  .responsiveTable tbody tr {
+    border: 1px solid $background-color;;
+  }
 }

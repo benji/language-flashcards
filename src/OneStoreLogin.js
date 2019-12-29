@@ -11,7 +11,7 @@ function OneStoreLogin(props) {
   }
 
   return (
-    <>
+    <div style={{ marginTop: "1em" }}>
       <p>
         This app uses <a href="https://www.onestore.io">onestore.io</a> to store
         the flashcards you will create.
@@ -31,14 +31,15 @@ function OneStoreLogin(props) {
         <li>
           <a onClick={login}>
             <Button size="sm">Create an account</Button>
-          </a>, and then
+          </a>
+          , and then
         </li>
         <li>
           create a new namespace for your flashcards, for example
           "Farsi-English"
         </li>
       </ul>
-    </>
+    </div>
   );
 }
 

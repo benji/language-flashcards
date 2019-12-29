@@ -4,7 +4,6 @@ import flash_store from "./FlashStore";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
 import { withRouter } from "react-router";
 import AppContext from "./AppContext";
 import FlashcardListItem from "./FlashcardListItem";
@@ -12,7 +11,6 @@ import Utils from "./Utils";
 import "./ListFlashcards.scss";
 
 function ListFlashcards(props) {
-  const languageName = props.match.params.language_name;
   const [flashcards, setFlashcards] = useState([]);
   const [newFlashcardName, setNewFlashcardName] = useState("");
 

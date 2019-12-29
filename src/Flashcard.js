@@ -9,6 +9,10 @@ import AppContext from "./AppContext";
 import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 import LanguagesService from "./LanguagesService";
+
+import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
+import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+
 import {
   faPlay,
   faTrashAlt,
@@ -133,7 +137,7 @@ function Flashcard(props) {
           />
           <Form.Control
             type="text"
-            placeholder="Pronounciation2"
+            placeholder="Pronounciation"
             value={newEntryPronounciation}
             onChange={handlePronounciationChange}
           />
@@ -142,38 +146,39 @@ function Flashcard(props) {
       </div>
 
       <div class="fcRow row3">
+        <label>Entries</label>
         <div className="ListflashcardEntries">
           {flashcardEntries.length == 0 ? (
             <>No entries yet</>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>{LanguagesService.from()}</th>
-                  <th>{LanguagesService.to()}</th>
-                  <th>Pronouciation</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>{LanguagesService.from()}</Th>
+                  <Th>{LanguagesService.to()}</Th>
+                  <Th>Pronouciation</Th>
+                  <Th></Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {flashcardEntries.map(e => {
                   return (
-                    <tr key={e.id}>
-                      <td>{e.from}</td>
-                      <td>{e.to}</td>
-                      <td>{e.p}</td>
-                      <td>
+                    <Tr key={e.id}>
+                      <Td>{e.from}</Td>
+                      <Td>{e.to}</Td>
+                      <Td>{e.p}</Td>
+                      <Td className="deleteIcon">
                         <FontAwesomeIcon
                           icon={faTrashAlt}
                           className="l-icon-action"
                           onClick={deleteEntry(e.id)}
                         />
-                      </td>
-                    </tr>
+                      </Td>
+                    </Tr>
                   );
                 })}
-              </tbody>
-            </table>
+              </Tbody>
+            </Table>
           )}
         </div>
       </div>
