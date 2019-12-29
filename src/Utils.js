@@ -20,4 +20,9 @@ self.shuffleArray = function(array) {
   return array;
 };
 
+self.goto = function(props, path) {
+  console.trace("GOTO " + path);
+  props.history.push(path);
+};
+
 export default self;
