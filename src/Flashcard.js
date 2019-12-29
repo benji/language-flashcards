@@ -10,6 +10,7 @@ import FormControl from "react-bootstrap/FormControl";
 import InputGroup from "react-bootstrap/InputGroup";
 import { withRouter } from "react-router";
 import AppContext from "./AppContext";
+import Utils from "./Utils";
 import LanguagesService from "./LanguagesService";
 import {
   faPlay,
@@ -71,7 +72,7 @@ function Flashcard(props) {
         return alert("You must define a few entries before starting!");
       }
       AppContext.fromto = fromto;
-      props.history.push("/flashcards/" + flashcardName + "/play");
+      Utils.goto(props, "/flashcards/" + flashcardName + "/play");
     };
   }
 
@@ -94,86 +95,84 @@ function Flashcard(props) {
     <React.Fragment>
       <h3>Flashcard {flashcardName}</h3>
 
-      <Row>
-        <Col>
-          <Button className="quizz_button" onClick={startQuizz(false)}>
-            <FontAwesomeIcon icon={faPlay} />
-            <br />
-            {LanguagesService.to()}{" "}
-            <FontAwesomeIcon icon={faArrowRight} size="sm" />{" "}
-            {LanguagesService.from()}
-          </Button>
-        </Col>
-        <Col>
-          <Button className="quizz_button" onClick={startQuizz(true)}>
-            <FontAwesomeIcon icon={faPlay} />
-            <br />
-            {LanguagesService.from()}{" "}
-            <FontAwesomeIcon icon={faArrowRight} size="sm" />{" "}
-            {LanguagesService.to()}
-          </Button>
-        </Col>
-      </Row>
-      <div className="clearfix"></div>
+      <div class="fcRow row1">
+        <Button className="quizz_button quizz_button_left" onClick={startQuizz(false)}>
+          <FontAwesomeIcon icon={faPlay} />
+          <br />
+          {LanguagesService.to()}{" "}
+          <FontAwesomeIcon icon={faArrowRight} size="sm" />{" "}
+          {LanguagesService.from()}
+        </Button>
 
-      <Form onSubmit={addFlashcardEntry} className="add-entry-form">
-        <Form.Label>New Entry</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder={LanguagesService.from()}
-          value={newEntryFrom}
-          onChange={handleFromChange}
-        />
-        <Form.Control
-          type="text"
-          placeholder={LanguagesService.to()}
-          value={newEntryTo}
-          onChange={handleToChange}
-        />
-        <Form.Control
-          type="text"
-          placeholder="Pronounciation"
-          value={newEntryPronounciation}
-          onChange={handlePronounciationChange}
-        />
-        <Button type="submit">Add</Button>
-      </Form>
+        <Button className="quizz_button quizz_button_right" onClick={startQuizz(true)}>
+          <FontAwesomeIcon icon={faPlay} />
+          <br />
+          {LanguagesService.from()}{" "}
+          <FontAwesomeIcon icon={faArrowRight} size="sm" />{" "}
+          {LanguagesService.to()}
+        </Button>
+      </div>
 
-      <div className="clearfix"></div>
+      <div class="fcRow row2">
+        <Form onSubmit={addFlashcardEntry} className="add-entry-form">
+          <Form.Label>New Entry</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder={LanguagesService.from()}
+            value={newEntryFrom}
+            onChange={handleFromChange}
+          />
+          <Form.Control
+            type="text"
+            placeholder={LanguagesService.to()}
+            value={newEntryTo}
+            onChange={handleToChange}
+          />
+          <Form.Control
+            type="text"
+            placeholder="Pronounciation2"
+            value={newEntryPronounciation}
+            onChange={handlePronounciationChange}
+          />
+          <Button type="submit">Add</Button>
+        </Form>
+      </div>
 
-      <div className="ListflashcardEntries">
-        {flashcardEntries.length == 0 ? (
-          <>No entries yet</>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>{LanguagesService.from()}</th>
-                <th>{LanguagesService.to()}</th>
-                <th>Pronouciation</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {flashcardEntries.map(e => {
-                return (
-                  <tr key={e.id}>
-                    <td>{e.from}</td>
-                    <td>{e.to}</td>
-                    <td>{e.p}</td>
-                    <td>
-                      <FontAwesomeIcon
-                        icon={faTrashAlt}
-                        className="l-icon-action"
-                        onClick={deleteEntry(e.id)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
+      <div class="fcRow row3">
+        <div className="ListflashcardEntries">
+          {flashcardEntries.length == 0 ? (
+            <>No entries yet</>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>{LanguagesService.from()}</th>
+                  <th>{LanguagesService.to()}</th>
+                  <th>Pronouciation</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {flashcardEntries.map(e => {
+                  return (
+                    <tr key={e.id}>
+                      <td>{e.from}</td>
+                      <td>{e.to}</td>
+                      <td>{e.p}</td>
+                      <td>
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          className="l-icon-action"
+                          onClick={deleteEntry(e.id)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </React.Fragment>
   );

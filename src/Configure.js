@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link,withRouter } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
@@ -9,6 +9,7 @@ import flash_store from "./FlashStore";
 import _OneStore from "onestore-client-node";
 import SelectLanguage from "./SelectLanguage";
 import AppContext from "./AppContext";
+import Utils from "./Utils";
 
 const saveButtonStyles = {
   float: "right"
@@ -39,7 +40,7 @@ function Configure(props) {
         configuration.id = id;
         setFromLanguage("");
         setToLanguage("");
-        props.history.push("/flashcards");
+        Utils.goto(props, "/flashcards");
       })
       .catch(AppContext.handleError);
   }

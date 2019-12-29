@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link,withRouter } from "react-router-dom";
 import flash_store from "./FlashStore";
 import AppContext from "./AppContext";
 import { faSignOutAlt, faSlidersH } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +10,7 @@ function logout() {
 }
 
 const styles = {
-  padding: "8px .5em",
+  padding: "8px 5px",
   position: "absolute",
   right: 0
 };
@@ -24,7 +24,7 @@ function Header(props) {
   return (
     <div style={styles}>
       {props.configuration ? (
-        <Link to={`/configure`} style={linkStyle}>
+        <Link to="/configure" style={linkStyle}>
           <FontAwesomeIcon icon={faSlidersH} className="l-icon-action" />
         </Link>
       ) : (
@@ -45,4 +45,4 @@ function Header(props) {
   );
 }
 
-export default Header;
+export default withRouter(Header);

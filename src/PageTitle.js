@@ -8,8 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function PageTitle(props) {
   function back() {
-    console.log("back");
-    props.history.push(props.backLink);
+    Utils.goto(props, props.backLink);
   }
 
   return (

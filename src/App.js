@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 
 import flash_store from "./FlashStore";
 import _OneStore from "onestore-client-node";
@@ -20,6 +20,7 @@ import "./App.scss";
 import "./AppCustom.scss";
 
 function App() {
+  console.log(100);
   console.log("App()");
   const [authenticated, setAuthenticated] = useState(false);
   const [configuration, setConfiguration] = useState();
@@ -79,12 +80,12 @@ function App() {
   return (
     <div className="App">
       {ready ? (
-        <BrowserRouter>
+        <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
           <Header
             isAuthenticated={authenticated}
             configuration={configuration}
           />
-          <div className="content">{renderMe()}</div>
+          <div className="content-fullpage">{renderMe()}</div>
         </BrowserRouter>
       ) : (
         <>Loading...</>

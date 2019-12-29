@@ -9,20 +9,25 @@ body {
 }
 
 .quizz_button {
-  width: 100%;
+  width: 49%;
   padding: 1rem 0 !important;
   font-size: 1rem !important;
 }
+.quizz_button_right {
+  float:right;
+}
+
+.fcRow {
+  margin-top: 1em;
+}
 
 .add-entry-form {
-  margin: 1em 0;
 }
 .add-entry-form button {
   float:right;
 }
 
 table {
-  margin-top: 1em;
   width: 100%;
   background: #eaeaea;
   overflow: auto;
