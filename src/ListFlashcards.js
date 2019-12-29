@@ -7,6 +7,9 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { withRouter } from "react-router";
 import AppContext from "./AppContext";
+import FlashcardListItem from "./FlashcardListItem";
+import Utils from "./Utils";
+import "./ListFlashcards.scss";
 
 function ListFlashcards(props) {
   const languageName = props.match.params.language_name;
@@ -54,38 +57,31 @@ function ListFlashcards(props) {
   return (
     <React.Fragment>
       <h3>Flashcards</h3>
-      <div className="ListFlashcards">
-        <ul>
+
+      <div className="fcRow ListFlashcards">
+        <ul className="flashcards">
           {flashcards.map(f => {
             return (
-              <li key={f.id}>
-                <Link to={`/flashcards/${f.name}`}>
-                  {f.name}
-                </Link>
-              </li>
+              <FlashcardListItem flashcardId={f.id} flashcardName={f.name} />
             );
           })}
         </ul>
 
-        <form onSubmit={addFlashcard}>
-          <Form.Label>New Flashcard</Form.Label>
-          <div className="d-flex flex-column">
-            <InputGroup className="mb-3">
-              <FormControl
-                value={newFlashcardName}
-                onChange={handleChange}
-                placeholder="Flashcard name"
-                aria-label="Flashcard name"
-                aria-describedby="basic-addon2"
-              />
-              <InputGroup.Append>
-                <Button variant="outline-secondary" type="submit">
-                  Add
-                </Button>
-              </InputGroup.Append>
-            </InputGroup>
-          </div>
-        </form>
+        <div className="fcRow">
+          <form onSubmit={addFlashcard}>
+            <Form.Label>New Flashcard</Form.Label>
+            <FormControl
+              value={newFlashcardName}
+              onChange={handleChange}
+              placeholder="Flashcard name"
+              aria-label="Flashcard name"
+              aria-describedby="basic-addon2"
+            />
+            <Button type="submit" style={{ float: "right" }}>
+              Add
+            </Button>
+          </form>
+        </div>
       </div>
     </React.Fragment>
   );

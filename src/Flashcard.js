@@ -4,12 +4,9 @@ import flash_store from "./FlashStore";
 import _OneStore from "onestore-client-node";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import FormControl from "react-bootstrap/FormControl";
-import InputGroup from "react-bootstrap/InputGroup";
 import { withRouter } from "react-router";
 import AppContext from "./AppContext";
+import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 import LanguagesService from "./LanguagesService";
 import {
@@ -93,10 +90,13 @@ function Flashcard(props) {
 
   return (
     <React.Fragment>
-      <h3>Flashcard {flashcardName}</h3>
+      <PageTitle title={"Flashcard" + flashcardName} backLink={"/flashcards"} />
 
       <div class="fcRow row1">
-        <Button className="quizz_button quizz_button_left" onClick={startQuizz(false)}>
+        <Button
+          className="quizz_button quizz_button_left"
+          onClick={startQuizz(false)}
+        >
           <FontAwesomeIcon icon={faPlay} />
           <br />
           {LanguagesService.to()}{" "}
@@ -104,7 +104,10 @@ function Flashcard(props) {
           {LanguagesService.from()}
         </Button>
 
-        <Button className="quizz_button quizz_button_right" onClick={startQuizz(true)}>
+        <Button
+          className="quizz_button quizz_button_right"
+          onClick={startQuizz(true)}
+        >
           <FontAwesomeIcon icon={faPlay} />
           <br />
           {LanguagesService.from()}{" "}

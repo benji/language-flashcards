@@ -1,0 +1,18 @@
+@import 'common';
+
+.flashcards {
+  list-style-type: none;
+  padding: 0;
+}
+.flashcards li {
+  background : $primary-color;
+  padding: .5em 1em;
+  margin-bottom: 1px;
+
+  display: flex;
+  justify-content: space-between;
+}
+.flashcards li:hover {
+  opacity: .8;
+  cursor: pointer;
+}

@@ -24,5 +24,10 @@ self.goto = function(props, path) {
   console.trace("GOTO " + path);
   props.history.push(path);
 };
+self.gotoFn = function(props, path) {
+  return function() {
+    self.goto(props, path);
+  };
+};
 
 export default self;
