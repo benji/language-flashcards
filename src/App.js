@@ -20,7 +20,6 @@ import "./App.scss";
 import "./AppCustom.scss";
 
 function App() {
-  console.log(100);
   console.log("App()");
   const [authenticated, setAuthenticated] = useState(false);
   const [configuration, setConfiguration] = useState();

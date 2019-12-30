@@ -29,7 +29,6 @@ self.registerAuthenticationCallback = function(c) {
 
 self.getConfiguration = function() {
   try {
-    console.log('12312312312')
     return self
       ._listP()(store_configuration, {})
       .then(r => {
@@ -37,7 +36,6 @@ self.getConfiguration = function() {
         if (!r.data || r.data.length == 0) {
           return undefined;
         } else if (r.data.length > 1) {
-          console.log(r);
           throw "More than 1 configuration has been found!";
         } else {
           const e = r.data[0];
@@ -81,8 +79,17 @@ self.listFlashcards = function() {
 
 self.addFlashcard = function(flashcard) {
   try {
-    self._validateKeys(flashcard);
+    self._validateNames([flashcard]);
     return self._createP()(store_flashcards, flashcard);
+  } catch (e) {
+    return Promise.reject(new Error(e));
+  }
+};
+
+self.deleteFlashcard = function(flashcard) {
+  try {
+    self._validateNames([flashcard]);
+    return self._removeP()(store_flashcards, flashcard);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
@@ -103,7 +110,10 @@ self.addFlashcardEntry = function(flashcardName, entry) {
 self.deleteFlashcardEntry = function(flashcardName, id) {
   try {
     self._validateNames([flashcardName, id]);
-    return self._removeP()(self._getFlashcardsEntriesStore(flashcardName), id);
+
+    // TODO need a delete store from onestore.io
+
+    //return self._removeP()(self._getFlashcardsEntriesStore(flashcardName), id);
   } catch (e) {
     return Promise.reject(new Error(e));
   }

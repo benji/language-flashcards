@@ -57,6 +57,18 @@ function Flashcard(props) {
     return false;
   }
 
+  function deleteFlashcard() {
+    return () => {
+      flash_store
+        .deleteFlashcard(flashcardName)
+        .then(r => {
+          delete AppContext.flashcardEntries[flashcardName]
+          Utils.goto(props, "/flashcards")
+        })
+        .catch(AppContext.handleError);
+    };
+  }
+
   function handleFromChange(e) {
     setNewEntryFrom(e.target.value);
   }
@@ -94,7 +106,7 @@ function Flashcard(props) {
 
   return (
     <React.Fragment>
-      <PageTitle title={"Flashcard" + flashcardName} backLink={"/flashcards"} />
+      <PageTitle title={flashcardName} backLink={"/flashcards"} />
 
       <div class="fcRow row1">
         <Button
@@ -181,6 +193,7 @@ function Flashcard(props) {
             </Table>
           )}
         </div>
+
       </div>
     </React.Fragment>
   );

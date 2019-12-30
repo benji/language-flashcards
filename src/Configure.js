@@ -15,6 +15,10 @@ const saveButtonStyles = {
   float: "right"
 };
 
+const formStyles = {
+  marginTop:"1em"
+}
+
 function Configure(props) {
   console.log("Configure()");
   console.log(AppContext.configuration);
@@ -49,7 +53,7 @@ function Configure(props) {
     <div className="Configure">
       <h3>Settings</h3>
 
-      <Form onSubmit={saveConfiguration}>
+      <Form onSubmit={saveConfiguration} style={formStyles}>
         <Form.Label>Target Language:</Form.Label>
         <SelectLanguage
           title="New language"

@@ -50,7 +50,7 @@ function PlayFlashcard(props) {
   return (
     <React.Fragment>
       <PageTitle
-        title={"Flashcard" + flashcardName}
+        title={flashcardName}
         backLink={"/flashcards/" + flashcardName}
       />
       <div className="quizz_container_1" onClick={next}>

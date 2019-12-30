@@ -7,6 +7,5 @@ const styles = {
 
 export default function(props) {
   console.log("404");
-  console.log(props);
   return <div style={styles}>404</div>;
 }

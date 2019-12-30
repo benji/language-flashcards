@@ -6,10 +6,15 @@ const self = {
 };
 
 self.from = function() {
-  return AllLanguages[AppContext.configuration.from].name
-}
+  return self._getById(AppContext.configuration.from).name;
+};
 self.to = function() {
-  return AllLanguages[AppContext.configuration.to].name
-}
+  return self._getById(AppContext.configuration.to).name;
+};
+
+self._getById = function(id) {
+  if (!(id in AllLanguages)) throw "Couldn't find language with ID=" + id;
+  return AllLanguages[id];
+};
 
 export default self;

@@ -3,7 +3,6 @@ import PageTitle from "./PageTitle";
 
 export default function Error(props) {
   console.log("Error()");
-  console.log(props);
 
   function errorMessage() {
     const e = props.error;

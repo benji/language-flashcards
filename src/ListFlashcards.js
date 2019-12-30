@@ -19,7 +19,6 @@ function ListFlashcards(props) {
       .listFlashcards()
       .then(r => {
         console.log("fetched flashcards:");
-        console.log(r);
         setFlashcards(
           r.data.map(r => {
             return { ...r.userdata, id: r.id };
