@@ -18,9 +18,14 @@ function ListFlashcards(props) {
     flash_store
       .listFlashcards()
       .then(r => {
-        console.log("fetched flashcards:");
+        var arr = r.data;
+
+        arr = arr.sort(function(a, b) {
+          return a.name - b.name
+        });
+
         setFlashcards(
-          r.data.map(r => {
+          arr.map(r => {
             return { ...r.userdata, id: r.id };
           })
         );

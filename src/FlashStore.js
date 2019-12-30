@@ -32,7 +32,6 @@ self.getConfiguration = function() {
     return self
       ._listP()(store_configuration, {})
       .then(r => {
-        console.error("YOO",r)
         if (!r.data || r.data.length == 0) {
           return undefined;
         } else if (r.data.length > 1) {
@@ -46,9 +45,8 @@ self.getConfiguration = function() {
           };
         } // otherwise return undefined
       })
-      .catch(self._catchHttpError)
+      .catch(self._catchHttpError);
   } catch (e) {
-    console.error("YOO2",e)
     return Promise.reject(new Error(e));
   }
 };
@@ -71,7 +69,7 @@ self.saveConfiguration = function(configuration) {
 
 self.listFlashcards = function() {
   try {
-    return self._listP()(store_flashcards, {});
+    return self._listP()(store_flashcards, { limit: 1000 });
   } catch (e) {
     return Promise.reject(new Error(e));
   }
@@ -201,9 +199,9 @@ self._removeP = function() {
 };
 
 self._catchHttpError = function(e) {
-  if (e.status == 429) throw 'onestore.io API limit exceeded!'
+  if (e.status == 429) throw "onestore.io API limit exceeded!";
   return e;
-}
+};
 
 self._validateNames = function(values) {
   for (var i in values) {
