@@ -13,7 +13,7 @@
     "bootstrap": "^4.4.1",
     "json-loader": "^0.5.7",
     "node-sass": "^4.13.0",
-    "onestore-client-node": "^1.0.7",
+    "onestore-client-node": "^1.1.1",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.12.0",

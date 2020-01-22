@@ -13,7 +13,7 @@ self.to = function() {
 };
 
 self._getById = function(id) {
-  if (!(id in AllLanguages)) throw "Couldn't find language with ID=" + id;
+  if (!(id in AllLanguages)) throw new Error("Couldn't find language with ID=" + id);
   return AllLanguages[id];
 };
 

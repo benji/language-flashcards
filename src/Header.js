@@ -35,7 +35,7 @@ function Header(props) {
           <FontAwesomeIcon
             icon={faSignOutAlt}
             className="l-icon-action"
-            size="md"
+            size="1x"
           />
         </a>
       ) : (

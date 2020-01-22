@@ -28,25 +28,30 @@ function Flashcard(props) {
   const [newEntryFrom, setNewEntryFrom] = useState("");
   const [newEntryTo, setNewEntryTo] = useState("");
   const [newEntryPronounciation, setNewEntryPronounciation] = useState("");
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
 
   useEffect(() => {
     AppContext.loadFlashcardEntries(flashcardName)
-      .then(setflashcardEntries)
+      .then((entries) => {
+        console.log(entries)
+        if (entries) setflashcardEntries([...entries])
+        else setflashcardEntries([])
+      })
       .catch(AppContext.handleError);
   }, []); // only once
 
   function addFlashcardEntry(e) {
     e.preventDefault();
 
-    const entry = {
+    const userdata = {
       from: newEntryFrom,
       to: newEntryTo,
       p: newEntryPronounciation
     };
     flash_store
-      .addFlashcardEntry(flashcardName, entry)
+      .addFlashcardEntry(flashcardName, userdata)
       .then(id => {
-        entry.id = id;
+        var entry = { id: id, userdata: userdata }
         setflashcardEntries([...flashcardEntries, entry]);
         AppContext.flashcardEntries[flashcardName].push(entry);
         setNewEntryFrom("");
@@ -55,18 +60,6 @@ function Flashcard(props) {
       })
       .catch(AppContext.handleError);
     return false;
-  }
-
-  function deleteFlashcard() {
-    return () => {
-      flash_store
-        .deleteFlashcard(flashcardName)
-        .then(r => {
-          delete AppContext.flashcardEntries[flashcardName]
-          Utils.goto(props, "/flashcards")
-        })
-        .catch(AppContext.handleError);
-    };
   }
 
   function handleFromChange(e) {
@@ -94,7 +87,7 @@ function Flashcard(props) {
       flash_store
         .deleteFlashcardEntry(flashcardName, id)
         .then(r => {
-          var newEntries = flashcardEntries.filter(function(entry) {
+          var newEntries = flashcardEntries.filter(function (entry) {
             return entry.id !== id;
           });
           AppContext.flashcardEntries[flashcardName] = newEntries;
@@ -104,11 +97,40 @@ function Flashcard(props) {
     };
   }
 
+  function confirmDeleteAll() {
+    console.log('show')
+    setShowDeleteAllConfirm(true)
+  }
+  function closeDeleteAllConfirm() {
+    console.log('hide')
+    setShowDeleteAllConfirm(false)
+  }
+
+  function deleteAll() {
+    console.log("DELETE ALL!")
+    closeDeleteAllConfirm()
+
+    AppContext.findFlashCardByName(flashcardName)
+      .then((f) => {
+        if (f) {
+          flash_store.deleteFlashcard(f)
+            .then(r => {
+              AppContext.removeFlashcard(f)
+              Utils.goto(props, "/flashcards")
+            })
+            .catch(AppContext.handleError);
+        } else {
+          alert("Flashcard already deleted? " + flashcardName)
+        }
+      })
+      .catch(AppContext.handleError);
+  }
+
   return (
     <React.Fragment>
       <PageTitle title={flashcardName} backLink={"/flashcards"} />
 
-      <div class="fcRow row1">
+      <div className="fcRow row1">
         <Button
           className="quizz_button quizz_button_left"
           onClick={startQuizz(false)}
@@ -132,7 +154,7 @@ function Flashcard(props) {
         </Button>
       </div>
 
-      <div class="fcRow row2">
+      <div className="fcRow row2">
         <Form onSubmit={addFlashcardEntry} className="add-entry-form">
           <Form.Label>New Entry</Form.Label>
           <Form.Control
@@ -157,43 +179,61 @@ function Flashcard(props) {
         </Form>
       </div>
 
-      <div class="fcRow row3">
+      <div className="fcRow row3">
         <label>Entries</label>
         <div className="ListflashcardEntries">
           {flashcardEntries.length == 0 ? (
             <>No entries yet</>
           ) : (
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>{LanguagesService.from()}</Th>
-                  <Th>{LanguagesService.to()}</Th>
-                  <Th>Pronouciation</Th>
-                  <Th></Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {flashcardEntries.map(e => {
-                  return (
-                    <Tr key={e.id}>
-                      <Td>{e.from}</Td>
-                      <Td>{e.to}</Td>
-                      <Td>{e.p}</Td>
-                      <Td className="deleteIcon">
-                        <FontAwesomeIcon
-                          icon={faTrashAlt}
-                          className="l-icon-action"
-                          onClick={deleteEntry(e.id)}
-                        />
-                      </Td>
-                    </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
-          )}
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th>{LanguagesService.from()}</Th>
+                    <Th>{LanguagesService.to()}</Th>
+                    <Th>Pronouciation</Th>
+                    <Th></Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {flashcardEntries.map(e => {
+                    return (
+                      <Tr key={e.id}>
+                        <Td>{e.userdata.from}</Td>
+                        <Td>{e.userdata.to}</Td>
+                        <Td>{e.userdata.p}</Td>
+                        <Td className="deleteIcon">
+                          <FontAwesomeIcon
+                            icon={faTrashAlt}
+                            className="l-icon-action"
+                            onClick={deleteEntry(e.id)}
+                          />
+                        </Td>
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </Table>
+            )}
         </div>
 
+      </div>
+
+      <div className="deleteAllRow">
+        {!showDeleteAllConfirm && (
+          <Button type="button" variant="danger" onClick={confirmDeleteAll}>
+            Delete Flashcard!
+        </Button>
+        )}
+        {showDeleteAllConfirm && (
+          <>
+            <Button type="button" variant="secondary" onClick={closeDeleteAllConfirm}>
+              Cancel
+            </Button>
+            <Button type="button" variant="danger" onClick={deleteAll}>
+              Yes, Delete Flashcard!
+            </Button>
+          </>
+        )}
       </div>
     </React.Fragment>
   );

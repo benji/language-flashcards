@@ -51,3 +51,8 @@ table td, table th {
     border: 1px solid $background-color;;
   }
 }
+
+.deleteAllRow {
+  margin-bottom: 1em;
+}
+.deleteAllRow button { margin-right: 1em; }

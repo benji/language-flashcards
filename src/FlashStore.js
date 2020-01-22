@@ -9,65 +9,46 @@ const store_flashcards = "Flashcards";
 
 const self = {};
 
-self.load = function(onAuthenticationChanged) {
+self.load = function (onAuthenticationChanged) {
   self.onestore = new _OneStore.Client({
     jsonify: true,
     //widgetElementId: "onestore-widget-container",
-    widgetAuthMethod: "popup.auto",
+    authMethod: "popup.auto",
     onAuthenticationChanged: onAuthenticationChanged
   });
 };
 
-self.isAuthenticated = function() {
+self.isAuthenticated = function () {
   return self.onestore && self.onestore.isAuthenticated();
 };
 
-self.registerAuthenticationCallback = function(c) {
+self.registerAuthenticationCallback = function (c) {
   if (self.authenticationCallbacks.indexOf(c) < 0)
     self.authenticationCallbacks.push(c);
 };
 
-self.getConfiguration = function() {
+const uuid0 = '00000000-0000-0000-0000-000000000000'
+
+self.getConfiguration = function () {
   try {
     return self
-      ._listP()(store_configuration, {})
-      .then(r => {
-        if (!r.data || r.data.length == 0) {
-          return undefined;
-        } else if (r.data.length > 1) {
-          throw "More than 1 configuration has been found!";
-        } else {
-          const e = r.data[0];
-          return {
-            id: e.id,
-            from: e.userdata.from,
-            to: e.userdata.to
-          };
-        } // otherwise return undefined
-      })
+      ._getP()(store_configuration, uuid0)
       .catch(self._catchHttpError);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
 };
 
-self.saveConfiguration = function(configuration) {
+self.saveConfiguration = function (configuration) {
   try {
     self._validateKeys(configuration);
-
-    return self.getConfiguration().then(c => {
-      if (c) {
-        return self._updateP()(store_configuration, c.id, configuration);
-      } else {
-        return self._createP()(store_configuration, configuration);
-      }
-    });
+    return self._updateP()(store_configuration, uuid0, configuration);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
 };
 
-self.listFlashcards = function() {
+self.listFlashcards = function () {
   try {
     return self._listP()(store_flashcards, { limit: 1000 });
   } catch (e) {
@@ -75,25 +56,43 @@ self.listFlashcards = function() {
   }
 };
 
-self.addFlashcard = function(flashcard) {
+self.addFlashcard = function (flashcard) {
   try {
-    self._validateNames([flashcard]);
+    self._validateKeys(flashcard);
     return self._createP()(store_flashcards, flashcard);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
 };
 
-self.deleteFlashcard = function(flashcard) {
-  try {
-    self._validateNames([flashcard]);
-    return self._removeP()(store_flashcards, flashcard);
-  } catch (e) {
-    return Promise.reject(new Error(e));
-  }
+self.deleteFlashcard = function (flashcard) {
+  return new Promise(function (resolve, reject) {
+    try {
+      self._validateNames([flashcard.userdata.name]);
+
+      self.loadAllFlashcardEntries(flashcard.userdata.name).then((r) => {
+        const entries = r.data
+        console.log("Got " + entries.length + " entries for flashcard " + flashcard.userdata.name)
+        var promises = []
+        for (var i = 0; i < entries.length; i++) {
+          const e = entries[i]
+          console.log('Schedule flashcard ' + flashcard.userdata.name + ' entry ' + e.id + ' for deletion')
+          promises.push(self.deleteFlashcardEntry(flashcard.userdata.name, e.id))
+        }
+        Promise.all(promises).then(() => {
+          console.log('Flashcard ' + flashcard.userdata.name + " will now be removed...")
+          self._removeP()(store_flashcards, flashcard.id)
+            .then(resolve)
+            .catch(reject)
+        }).catch(reject)
+      })
+    } catch (e) {
+      reject(e)
+    }
+  })
 };
 
-self.addFlashcardEntry = function(flashcardName, entry) {
+self.addFlashcardEntry = function (flashcardName, entry) {
   try {
     self._validateNames([flashcardName]);
     return self._createP()(
@@ -105,123 +104,91 @@ self.addFlashcardEntry = function(flashcardName, entry) {
   }
 };
 
-self.deleteFlashcardEntry = function(flashcardName, id) {
+self.deleteFlashcardEntry = function (flashcardName, id) {
   try {
     self._validateNames([flashcardName, id]);
 
-    // TODO need a delete store from onestore.io
-
-    //return self._removeP()(self._getFlashcardsEntriesStore(flashcardName), id);
+    return self._removeP()(self._getFlashcardsEntriesStore(flashcardName), id);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
 };
 
-self.loadAllFlashcardEntries = function(flashcardName) {
+self.loadAllFlashcardEntries = function (flashcardName) {
   try {
     self._validateNames([flashcardName]);
-    const entries = [];
-    return new Promise((resolve, reject) => {
-      self._loadNextFlashcardEntries(
-        flashcardName,
-        entries,
-        null,
-        resolve,
-        reject
-      );
-    });
+    var opts = { limit: 1000, maxRequests: 20 };
+    return self._listP()(self._getFlashcardsEntriesStore(flashcardName), opts)
   } catch (e) {
     return Promise.reject(new Error(e));
   }
 };
 
-self._loadNextFlashcardEntries = function(
-  flashcardName,
-  entries,
-  start,
-  resolve,
-  reject
-) {
-  try {
-    console.log("Loading next batch of entries starting at " + start);
-    const opts = {};
-    if (start) opts.start = start;
-    self
-      ._listP()(self._getFlashcardsEntriesStore(flashcardName), opts)
-      .then(r => {
-        for (var i in r.data) {
-          var e = r.data[i];
-          entries.push({ ...e.userdata, id: e.id });
+self.deleteAll = function () {
+  return new Promise(function (resolve, reject) {
+    self.listFlashcards()
+      .then((r) => {
+        const flashcards = r.data
+        console.log("Got " + flashcards.length + " flashcards.")
+        var promises = []
+        for (var i = 0; i < flashcards.length; i++) {
+          const flashcard = flashcards[i]
+          console.log('Schedule flashcard ' + JSON.stringify(flashcard) + ' for deletion')
+          promises.push(self.deleteFlashcard(flashcard))
         }
-        if (r.links && r.links.next) {
-          self._loadNextFlashcardEntries(
-            flashcardName,
-            entries,
-            r.links.next,
-            resolve,
-            reject
-          );
-        } else {
-          resolve(entries);
-        }
-      });
-  } catch (e) {
-    return reject(new Error(e));
-  }
-};
-
-self.listflashcardEntries = function(flashcardName) {
-  try {
-    self._validateNames([flashcardName]);
-    return self._listP()(self._getFlashcardsEntriesStore(flashcardName), {});
-  } catch (e) {
-    return Promise.reject(new Error(e));
-  }
-};
+        Promise.all(promises).then(resolve).catch(reject)
+      })
+      .catch(reject)
+  })
+}
 
 /* PRIVATE */
-self._getFlashcardsEntriesStore = function(flashcardName) {
+self._getFlashcardsEntriesStore = function (flashcardName) {
   return "Flashcards_" + flashcardName;
 };
 
-self._listP = function() {
+self._getP = function () {
+  return util.promisify(self.onestore.get.bind(self.onestore));
+};
+self._listP = function () {
   return util.promisify(self.onestore.list.bind(self.onestore));
 };
-self._createP = function() {
+self._createP = function () {
   console.trace("_createP");
   return util.promisify(self.onestore.create.bind(self.onestore));
 };
-self._updateP = function() {
+self._updateP = function () {
   return util.promisify(self.onestore.update.bind(self.onestore));
 };
-self._removeP = function() {
+self._removeP = function () {
   return util.promisify(self.onestore.remove.bind(self.onestore));
 };
 
-self._catchHttpError = function(e) {
+self._catchHttpError = function (e) {
   if (e.status == 429) throw "onestore.io API limit exceeded!";
   return e;
 };
 
-self._validateNames = function(values) {
+self._validateNames = function (values) {
   for (var i in values) {
-    self._validateValue(values[i]);
+    self._validateValue(values[i], false, 'Validating names in ' + JSON.stringify(values) + ". ");
   }
 };
-self._validateKeys = function(obj) {
+self._validateKeys = function (obj) {
   for (var k in obj) {
-    self._validateValue(obj[k], k == "from" || k == "to");
+    self._validateValue(obj[k], k == "from" || k == "to", 'Validating key ' + k + ' in ' + JSON.stringify(obj) + ". ");
   }
 };
-self._validateValue = function(value, onlyCheckNotEmpty) {
+self._validateValue = function (value, onlyCheckNotEmpty, desc) {
   var err;
+  if (! desc) desc = ''
   if (!value || value === "") {
-    err = "Disallowed undefined value";
+    err = desc + "Disallowed undefined value";
   } else if (!onlyCheckNotEmpty && !/^[a-zA-Z0-9\-_ ]+$/.test(value)) {
-    err = "Invalid value [" + value + "]";
+    err = desc + "Invalid value [" + value + "]";
   }
   if (err) {
-    console.error(value);
+    console.error(err);
     throw err;
   }
 };

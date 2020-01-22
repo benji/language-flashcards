@@ -38,9 +38,9 @@ function PlayFlashcard(props) {
   function renderCurrentEntry() {
     console.log("rendering current entry ", index, showAnswer);
     const entry = flashcardEntries[index % flashcardEntries.length];
-    setQuestion(AppContext.fromto ? entry.from : entry.to);
-    setAnswer(AppContext.fromto ? entry.to : entry.from);
-    setPronouciation(entry.p);
+    setQuestion(AppContext.fromto ? entry.userdata.from : entry.userdata.to);
+    setAnswer(AppContext.fromto ? entry.userdata.to : entry.userdata.from);
+    setPronouciation(entry.userdata.p);
   }
 
   function answerStyle() {
