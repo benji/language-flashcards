@@ -39,9 +39,9 @@ function App() {
         flash_store
           .getConfiguration()
           .then(c => {
-            console.log('configuration received:')
-            console.log(c)
-            AppContext.configuration = c.userdata;
+            console.log("configuration received:");
+            console.log(c);
+            AppContext.configuration = c ? c.userdata : {};
             setConfiguration(c);
             setReady(true);
           })

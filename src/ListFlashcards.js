@@ -1,33 +1,86 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
-import flash_store from "./FlashStore";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import { withRouter } from "react-router";
 import AppContext from "./AppContext";
 import FlashcardListItem from "./FlashcardListItem";
-import Utils from "./Utils";
 import "./ListFlashcards.scss";
 import { DndProvider } from "react-dnd";
-import MultiBackend from "react-dnd-multi-backend";
-import HTML5toTouch from "react-dnd-multi-backend/dist/esm/HTML5toTouch"; // or any other pipeline
+
+import HTML5Backend from "react-dnd-html5-backend";
+import TouchBackend from "react-dnd-touch-backend";
+import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
+
 import update from "immutability-helper";
+import flash_store from "./FlashStore";
 
 function ListFlashcards(props) {
   const [flashcards, setFlashcards] = useState([]);
   const [newFlashcardName, setNewFlashcardName] = useState("");
+  const [draggedId, setDraggedId] = useState(null);
 
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
 
+  let orderConfig;
+
   useEffect(() => {
+    loadFlashcards();
+  }, []); //only once
+
+  function loadFlashcards() {
     AppContext.getCachedFlashcardsArray()
       .then(arr => {
-        setFlashcards([...arr]); // copy
+        orderFlashcard([...arr]); // copy
       })
       .catch(AppContext.handleError);
-  }, []); //only once
+  }
+
+  function orderFlashcard(_flashcards) {
+    console.log("fcs", _flashcards);
+    flash_store
+      .getFlashcardsOrdering()
+      .then(_orderConfig => {
+        orderConfig = _orderConfig ? _orderConfig.userdata : [];
+        console.log("loaded order", orderConfig);
+
+        if (orderConfig == null) {
+          orderConfig = [];
+        }
+
+        const getOrder = fid => orderConfig.findIndex(x => x.id === fid);
+        _flashcards = _flashcards.sort((a, b) => {
+          return getOrder(a.id) - getOrder(b.id);
+        });
+
+        setFlashcards(_flashcards);
+
+        if (orderingChanged()) {
+          saveOrdering();
+        }
+      })
+      .catch(AppContext.handleError);
+  }
+
+  function orderingChanged() {
+    for (var i in flashcards) {
+      if (!orderConfig[i] || orderConfig[i].id !== flashcards[i].id) {
+        return true;
+      }
+    }
+  }
+
+  function saveOrdering() {
+    orderConfig = flashcards.map(f => {
+      return { id: f.id, name: f.userdata.name };
+    });
+
+    console.log("SAve order", orderConfig);
+    flash_store
+      .saveFlashcardsOrdering(orderConfig)
+      .then()
+      .catch(AppContext.handleError);
+  }
 
   function addFlashcard(e) {
     e.preventDefault();
@@ -43,8 +96,9 @@ function ListFlashcards(props) {
             .then(id => {
               var flashcard = { id: id, userdata: userdata };
               AppContext.addFlashcard(flashcard);
-              setFlashcards([...flashcards, flashcard]);
+              setFlashcards([flashcard, ...flashcards]);
               setNewFlashcardName("");
+              saveOrdering();
             })
             .catch(AppContext.handleError);
         }
@@ -76,6 +130,7 @@ function ListFlashcards(props) {
         AppContext.deleteAll();
         setFlashcards([]);
         setNewFlashcardName("");
+        saveOrdering();
       })
       .catch(AppContext.handleError);
   }
@@ -91,6 +146,22 @@ function ListFlashcards(props) {
     },
     [flashcards]
   );
+
+  const HTML5toTouch = {
+    backends: [
+      {
+        backend: HTML5Backend
+      },
+      {
+        backend: TouchBackend,
+        preview: true,
+        transition: TouchTransition,
+        options: {
+          delayTouchStart: 100
+        }
+      }
+    ]
+  };
 
   return (
     <React.Fragment>
@@ -108,6 +179,9 @@ function ListFlashcards(props) {
                   flashcardId={f.id}
                   flashcardName={f.userdata.name}
                   moveFlashcard={moveFlashcard}
+                  onDropFlashcard={saveOrdering}
+                  setDraggedId={setDraggedId}
+                  draggedId={draggedId}
                 />
               );
             })}

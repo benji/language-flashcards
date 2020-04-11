@@ -12,3 +12,9 @@
     -> click -> load actual flashcard!
 
 - save / backup?
+
+
+need to cache data: flashcards + order + settings
+need for a global state shared = cache
+use same API for batch loading
+load order first and FCs on demand

@@ -1,12 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import flash_store from "./FlashStore";
-import Button from "react-bootstrap/Button";
-import FormControl from "react-bootstrap/FormControl";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
 import { withRouter } from "react-router";
-import AppContext from "./AppContext";
 import Utils from "./Utils";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -21,6 +14,12 @@ function FlashcardListItem(props) {
 
   const [, drop] = useDrop({
     accept: FLASHCARD_TYPE,
+
+    drop(item, monitor) {
+      props.onDropFlashcard();
+      console.log("DROP -> setDraggedId to null");
+      props.setDraggedId(null);
+    },
 
     hover(item, monitor) {
       if (!ref.current) {
@@ -62,23 +61,49 @@ function FlashcardListItem(props) {
     }
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  let [{ isDragging }, drag] = useDrag({
     item: { type: FLASHCARD_TYPE, id: props.flashcardId, index: props.index },
     collect: monitor => ({
       isDragging: monitor.isDragging()
     })
   });
-
-  const style = isDragging ? { backgroundColor: "transparent" } : {};
+  //setDragging(isDragging);
 
   drag(drop(ref));
 
+  let onMouseDownTimeout = null;
+
+  const onMouseDown = id => () => {
+    //alert("MOUSEDOWN");
+    onMouseDownTimeout = setTimeout(() => {
+      console.log("onMouseDown -> setDraggedId to " + id);
+      props.setDraggedId(id);
+    }, 100);
+  };
+  const onMouseUp = id => () => {
+    console.log("onMouseUp -> setDraggedId to null");
+    clearInterval(onMouseDownTimeout);
+    props.setDraggedId(null);
+  };
+
+  const classNames = [];
+  if (props.draggedId == props.flashcardId) {
+    classNames.push("flashcardDragged");
+  }
+  if (props.draggedId === null) {
+    classNames.push("noOngoingDrag");
+  }
+
   return (
     <li
-      style={style}
       ref={ref}
       key={props.flashcardId}
       onClick={Utils.gotoFn(props, `/flashcards/${props.flashcardName}`)}
+      className={classNames}
+      onMouseDown={onMouseDown(props.flashcardId)}
+      onMouseUp={onMouseUp(props.flashcardId)}
+      onTouchStart={onMouseDown(props.flashcardId)}
+      onTouchEnd={onMouseUp(props.flashcardId)}
     >
       <span className="fcItemName">{props.flashcardName}</span>
       <span className="fcItemIcon">

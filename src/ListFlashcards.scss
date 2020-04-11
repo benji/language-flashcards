@@ -5,20 +5,26 @@
   padding: 0;
 }
 .flashcards li {
-  background: $background-primary-color;
+  background-color: $background-primary-color;
   padding: 0.5em 1em;
   margin-bottom: 1px;
 
   display: flex;
   justify-content: space-between;
 }
-.flashcards li:hover {
-  opacity: 0.8;
-  cursor: pointer;
+@media screen and (min-width: 800px) {
+  .flashcards li.noOngoingDrag:hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
 }
 .deleteAllRow {
   margin-bottom: 1em;
 }
 .deleteAllRow button {
   margin-right: 1em;
+}
+
+.flashcardDragged {
+  background-color: rgba(255, 137, 201, 0.35) !important;
 }

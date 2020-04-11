@@ -21,8 +21,10 @@ self.shuffleArray = function(array) {
 };
 
 self.goto = function(props, path) {
-  console.trace("GOTO " + path);
-  props.history.push(path);
+  // console.trace("GOTO " + path);
+  if (props.history) {
+    props.history.push(path);
+  }
 };
 self.gotoFn = function(props, path) {
   return function() {
