@@ -1,0 +1,14 @@
+- being able to order the flashcards
+    
+  -> UI: how would that work on mobile?
+  https://sortablejs.github.io/Sortable/
+    - include js
+    - just try to make the UI part work
+
+  -> backend: meta store that saves the order
+    -> new flashcard -> update meta order (add first)
+    -> remove flashcard -> update meta order (rm)
+    -> list = load meta only
+    -> click -> load actual flashcard!
+
+- save / backup?

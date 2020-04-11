@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import flash_store from "./FlashStore";
 import Button from "react-bootstrap/Button";
@@ -10,6 +10,10 @@ import AppContext from "./AppContext";
 import FlashcardListItem from "./FlashcardListItem";
 import Utils from "./Utils";
 import "./ListFlashcards.scss";
+import { DndProvider } from "react-dnd";
+import MultiBackend from "react-dnd-multi-backend";
+import HTML5toTouch from "react-dnd-multi-backend/dist/esm/HTML5toTouch"; // or any other pipeline
+import update from "immutability-helper";
 
 function ListFlashcards(props) {
   const [flashcards, setFlashcards] = useState([]);
@@ -20,7 +24,7 @@ function ListFlashcards(props) {
   useEffect(() => {
     AppContext.getCachedFlashcardsArray()
       .then(arr => {
-        setFlashcards([...arr]) // copy
+        setFlashcards([...arr]); // copy
       })
       .catch(AppContext.handleError);
   }, []); //only once
@@ -29,7 +33,7 @@ function ListFlashcards(props) {
     e.preventDefault();
 
     AppContext.findFlashCardByName(newFlashcardName)
-      .then((f) => {
+      .then(f => {
         if (f) {
           alert('Flashcard "' + newFlashcardName + '" already exist');
         } else {
@@ -37,8 +41,8 @@ function ListFlashcards(props) {
           flash_store
             .addFlashcard(userdata)
             .then(id => {
-              var flashcard = { id: id, userdata: userdata }
-              AppContext.addFlashcard(flashcard)
+              var flashcard = { id: id, userdata: userdata };
+              AppContext.addFlashcard(flashcard);
               setFlashcards([...flashcards, flashcard]);
               setNewFlashcardName("");
             })
@@ -55,40 +59,60 @@ function ListFlashcards(props) {
   }
 
   function confirmDeleteAll() {
-    console.log('show')
-    setShowDeleteAllConfirm(true)
+    console.log("show");
+    setShowDeleteAllConfirm(true);
   }
   function closeDeleteAllConfirm() {
-    console.log('hide')
-    setShowDeleteAllConfirm(false)
+    console.log("hide");
+    setShowDeleteAllConfirm(false);
   }
 
   function deleteAll() {
-    console.log("DELETE ALL!")
-    closeDeleteAllConfirm()
+    console.log("DELETE ALL!");
+    closeDeleteAllConfirm();
     flash_store
       .deleteAll()
       .then(() => {
-        AppContext.deleteAll()
+        AppContext.deleteAll();
         setFlashcards([]);
         setNewFlashcardName("");
       })
       .catch(AppContext.handleError);
   }
 
+  const moveFlashcard = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragFlashcard = flashcards[dragIndex];
+      setFlashcards(
+        update(flashcards, {
+          $splice: [[dragIndex, 1], [hoverIndex, 0, dragFlashcard]]
+        })
+      );
+    },
+    [flashcards]
+  );
+
   return (
     <React.Fragment>
       <h3>Flashcards</h3>
 
       <div className="fcRow ListFlashcards">
-        <ul className="flashcards">
-          {flashcards.map(f => {
-            return (
-              <FlashcardListItem key={f.id} flashcardId={f.id} flashcardName={f.userdata.name} />
-            );
-          })}
-        </ul>
-
+        {" "}
+        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+          <ul className="flashcards">
+            {flashcards.map((f, index) => {
+              return (
+                <FlashcardListItem
+                  key={f.id}
+                  index={index}
+                  flashcardId={f.id}
+                  flashcardName={f.userdata.name}
+                  moveFlashcard={moveFlashcard}
+                />
+              );
+            })}
+          </ul>
+        </DndProvider>
         <div className="fcRow">
           <form onSubmit={addFlashcard}>
             <Form.Label>New Flashcard</Form.Label>
@@ -110,11 +134,15 @@ function ListFlashcards(props) {
         {!showDeleteAllConfirm && (
           <Button type="button" variant="danger" onClick={confirmDeleteAll}>
             Delete All!
-        </Button>
+          </Button>
         )}
         {showDeleteAllConfirm && (
           <>
-            <Button type="button" variant="secondary" onClick={closeDeleteAllConfirm}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={closeDeleteAllConfirm}
+            >
               Cancel
             </Button>
             <Button type="button" variant="danger" onClick={deleteAll}>
@@ -123,7 +151,6 @@ function ListFlashcards(props) {
           </>
         )}
       </div>
-
     </React.Fragment>
   );
 }
