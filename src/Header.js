@@ -26,21 +26,19 @@ function Header(props) {
 
   return (
     <div style={styles}>
-      {store.get(store.APP_CONFIG) ? (
-        <Link to="/configure" style={linkStyle}>
-          <FontAwesomeIcon icon={faSlidersH} className="l-icon-action" />
-        </Link>
-      ) : (
-        <></>
-      )}
       {props.isAuthenticated ? (
-        <a onClick={logout} className="headerLink" style={linkStyle}>
-          <FontAwesomeIcon
-            icon={faSignOutAlt}
-            className="l-icon-action"
-            size="1x"
-          />
-        </a>
+        <>
+          <Link to="/configure" style={linkStyle}>
+            <FontAwesomeIcon icon={faSlidersH} className="l-icon-action" />
+          </Link>
+          <a onClick={logout} className="headerLink" style={linkStyle}>
+            <FontAwesomeIcon
+              icon={faSignOutAlt}
+              className="l-icon-action"
+              size="1x"
+            />
+          </a>
+        </>
       ) : (
         <></>
       )}

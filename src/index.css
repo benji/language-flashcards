@@ -20,3 +20,15 @@ code {
   -ms-user-select: none;
   user-select: none;
 }
+
+.onestore-icon {
+  width: 20px;
+  margin: 0 0.2em 0 0.5em;
+}
+.onestore-link {
+  color: black;
+  font-weight: bold;
+}
+.choices {
+  text-decoration: underline;
+}
