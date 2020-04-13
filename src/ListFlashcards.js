@@ -110,6 +110,7 @@ function ListFlashcards(props) {
               ]);
               setNewFlashcardName("");
               saveOrdering();
+              Utils.goto(props, "/flashcards/" + newFlashcardName);
             })
             .catch(Utils.handleError);
         }
@@ -212,7 +213,7 @@ function ListFlashcards(props) {
               aria-describedby="basic-addon2"
             />
             <Button type="submit" style={{ float: "right" }}>
-              Add
+              Create
             </Button>
           </form>
         </div>

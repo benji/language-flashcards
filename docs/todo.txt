@@ -1,20 +1,12 @@
-- being able to order the flashcards
-    
-  -> UI: how would that work on mobile?
-  https://sortablejs.github.io/Sortable/
-    - include js
-    - just try to make the UI part work
+
+BATCH LOAD:
+use same API for batch loading
+load order first and FCs on demand
+
 
   -> backend: meta store that saves the order
-    -> new flashcard -> update meta order (add first)
-    -> remove flashcard -> update meta order (rm)
     -> list = load meta only
     -> click -> load actual flashcard!
 
 - save / backup?
 
-
-need to cache data: flashcards + order + settings
-need for a global state shared = cache
-use same API for batch loading
-load order first and FCs on demand

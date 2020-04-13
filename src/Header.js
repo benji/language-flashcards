@@ -10,7 +10,7 @@ function logout() {
 }
 
 const styles = {
-  padding: "8px 5px",
+  padding: "15px 10px 0 0",
   position: "absolute",
   right: 0
 };

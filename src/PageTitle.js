@@ -13,17 +13,17 @@ function PageTitle(props) {
   return (
     <h3>
       {props.backLink ? (
-        <FontAwesomeIcon
-          icon={faPlay}
-          rotation={180}
-          onClick={back}
-          className="l-icon-action"
-          style={{ marginRight: ".5em" }}
-        />
+        <div onClick={back} className="l-icon-action">
+          <FontAwesomeIcon
+            icon={faPlay}
+            rotation={180}
+            style={{ marginRight: ".5em" }}
+          />
+          {props.title}
+        </div>
       ) : (
-        <></>
+        <>{props.title}</>
       )}
-      {props.title}
     </h3>
   );
 }

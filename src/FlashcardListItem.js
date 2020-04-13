@@ -17,6 +17,15 @@ function FlashcardListItem(props) {
 
   //store.useState(store.DRAGGED_FLASHCARD_ID);
 
+  const getFlashcardEntriesCount = () => {
+    const flashcardEntries = store.get(store.FLASHCARD_ENTRIES);
+    console.log(flashcardEntries);
+    if (props.flashcardId in flashcardEntries) {
+      return flashcardEntries[props.flashcardId].length;
+    }
+    return "";
+  };
+
   const [, drop] = useDrop({
     accept: FLASHCARD_TYPE,
 
@@ -108,7 +117,9 @@ function FlashcardListItem(props) {
       onTouchStart={onMouseDown(props.flashcardId)}
       onTouchEnd={onMouseUp(props.flashcardId)}
     >
-      <span className="fcItemName">{props.flashcardName}</span>
+      <span className="fcItemName">
+        {props.flashcardName} {getFlashcardEntriesCount()}
+      </span>
       <span className="fcItemIcon">
         <FontAwesomeIcon icon={faPlay} size="sm" className="faIcon" />
       </span>
