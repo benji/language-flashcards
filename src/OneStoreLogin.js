@@ -1,5 +1,5 @@
 import React from "react";
-import flash_store from "./FlashStore";
+import flash_store from "./services/FlashcardStoreDAO";
 import _OneStore from "onestore-client-node";
 import Button from "react-bootstrap/Button";
 

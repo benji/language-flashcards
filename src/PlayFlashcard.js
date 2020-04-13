@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { withRouter } from "react-router";
-import AppContext from "./AppContext";
+import FlashcardService from "./services/FlashcardService";
 import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 
@@ -19,9 +19,9 @@ function PlayFlashcard(props) {
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    AppContext.loadFlashcardEntries(flashcardName)
+    FlashcardService.loadFlashcardEntries(flashcardName)
       .then(loadQuizz)
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }, []); // only once
 
   function loadQuizz(entries) {

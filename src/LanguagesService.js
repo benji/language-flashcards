@@ -1,4 +1,4 @@
-import AppContext from "./AppContext";
+import FlashcardService from "./services/FlashcardService";
 import store from "./services/FlashcardStore";
 
 const AllLanguages = require("./languages.json");

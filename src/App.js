@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import flash_store from "./FlashStore";
+import flash_store from "./services/FlashcardStoreDAO";
 import _OneStore from "onestore-client-node";
 import Configure from "./Configure";
 import ListFlashcards from "./ListFlashcards";
 import Flashcard from "./Flashcard";
 import OneStoreLogin from "./OneStoreLogin";
 import Header from "./Header";
-import AppContext from "./AppContext";
+import FlashcardService from "./services/FlashcardService";
 import Error from "./Error";
 import NotFound from "./NotFound";
 import PlayFlashcard from "./PlayFlashcard";
 import store from "./services/FlashcardStore";
+import Utils from "./Utils";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.scss";
@@ -37,7 +38,7 @@ function App() {
             store.set(store.APP_CONFIG, c ? c.userdata : null);
             store.set(store.IS_READY, true);
           })
-          .catch(AppContext.handleError);
+          .catch(Utils.handleError);
       } else {
         store.set(store.IS_READY, true);
       }

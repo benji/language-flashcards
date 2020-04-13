@@ -1,3 +1,5 @@
+import store from "./services/FlashcardStore";
+
 const self = {};
 
 self.shuffleArray = function(array) {
@@ -30,6 +32,12 @@ self.gotoFn = function(props, path) {
   return function() {
     self.goto(props, path);
   };
+};
+
+self.handleError = function(e) {
+  console.error(e);
+  store.set(store.IS_READY, true);
+  store.set(store.ERROR, e);
 };
 
 export default self;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import flash_store from "./FlashStore";
+import flash_store from "./services/FlashcardStoreDAO";
 import _OneStore from "onestore-client-node";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { withRouter } from "react-router";
-import AppContext from "./AppContext";
+import FlashcardService from "./services/FlashcardService";
 import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 import LanguagesService from "./LanguagesService";
@@ -32,13 +32,13 @@ function Flashcard(props) {
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
 
   useEffect(() => {
-    AppContext.loadFlashcardEntries(flashcardName)
+    FlashcardService.loadFlashcardEntries(flashcardName)
       .then(entries => {
         console.log(entries);
         if (entries) setflashcardEntries([...entries]);
         else setflashcardEntries([]);
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }, []); // only once
 
   function addFlashcardEntry(e) {
@@ -54,12 +54,12 @@ function Flashcard(props) {
       .then(id => {
         var entry = { id: id, userdata: userdata };
         setflashcardEntries([...flashcardEntries, entry]);
-        AppContext.flashcardEntries[flashcardName].push(entry);
+        FlashcardService.flashcardEntries[flashcardName].push(entry);
         setNewEntryFrom("");
         setNewEntryTo("");
         setNewEntryPronounciation("");
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
     return false;
   }
 
@@ -91,10 +91,14 @@ function Flashcard(props) {
           var newEntries = flashcardEntries.filter(function(entry) {
             return entry.id !== id;
           });
-          AppContext.flashcardEntries[flashcardName] = newEntries;
+          store.set(store.FLASHCARD_ENTRIES, flashcardEntries => {
+            const newFlashcardEntries = { ...flashcardEntries };
+            newFlashcardEntries[flashcardName] = newEntries;
+            return newFlashcardEntries;
+          });
           setflashcardEntries(newEntries);
         })
-        .catch(AppContext.handleError);
+        .catch(Utils.handleError);
     };
   }
 
@@ -111,21 +115,21 @@ function Flashcard(props) {
     console.log("DELETE ALL!");
     closeDeleteAllConfirm();
 
-    AppContext.findFlashCardByName(flashcardName)
+    FlashcardService.findFlashCardByName(flashcardName)
       .then(f => {
         if (f) {
           flash_store
             .deleteFlashcard(f)
             .then(r => {
-              AppContext.removeFlashcard(f);
+              FlashcardService.removeFlashcard(f);
               Utils.goto(props, "/flashcards");
             })
-            .catch(AppContext.handleError);
+            .catch(Utils.handleError);
         } else {
           alert("Flashcard already deleted? " + flashcardName);
         }
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }
 
   return (

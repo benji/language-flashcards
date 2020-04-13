@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
-import flash_store from "./FlashStore";
+import flash_store from "./services/FlashcardStoreDAO";
 import { faSignOutAlt, faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import store from "./services/FlashcardStore";

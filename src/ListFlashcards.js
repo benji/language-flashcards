@@ -3,17 +3,18 @@ import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import { withRouter } from "react-router";
-import AppContext from "./AppContext";
+import FlashcardService from "./services/FlashcardService";
 import FlashcardListItem from "./FlashcardListItem";
 import "./ListFlashcards.scss";
 import { DndProvider } from "react-dnd";
+import Utils from "./Utils";
 
 import HTML5Backend from "react-dnd-html5-backend";
 import TouchBackend from "react-dnd-touch-backend";
 import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
 
 import update from "immutability-helper";
-import flash_store from "./FlashStore";
+import flash_store from "./services/FlashcardStoreDAO";
 
 import store from "./services/FlashcardStore";
 
@@ -32,11 +33,12 @@ function ListFlashcards(props) {
   }, []); //only once
 
   function loadFlashcards() {
-    AppContext.getCachedFlashcardsArray()
+    FlashcardService.getCachedFlashcardsArray()
       .then(arr => {
+        console.log("cached FC => ", arr);
         orderFlashcard([...arr]); // copy
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }
 
   function orderFlashcard(_flashcards) {
@@ -62,7 +64,7 @@ function ListFlashcards(props) {
           saveOrdering();
         }
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }
 
   function orderingChanged() {
@@ -85,13 +87,13 @@ function ListFlashcards(props) {
     flash_store
       .saveFlashcardsOrdering(orderConfig)
       .then()
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }
 
   function addFlashcard(e) {
     e.preventDefault();
 
-    AppContext.findFlashCardByName(newFlashcardName)
+    FlashcardService.findFlashCardByName(newFlashcardName)
       .then(f => {
         if (f) {
           alert('Flashcard "' + newFlashcardName + '" already exist');
@@ -101,7 +103,7 @@ function ListFlashcards(props) {
             .addFlashcard(userdata)
             .then(id => {
               var flashcard = { id: id, userdata: userdata };
-              AppContext.addFlashcard(flashcard);
+              FlashcardService.addFlashcard(flashcard);
               store.set(store.FLASHCARDS, [
                 flashcard,
                 ...store.get(store.FLASHCARDS)
@@ -109,10 +111,10 @@ function ListFlashcards(props) {
               setNewFlashcardName("");
               saveOrdering();
             })
-            .catch(AppContext.handleError);
+            .catch(Utils.handleError);
         }
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
 
     return false;
   }
@@ -136,12 +138,12 @@ function ListFlashcards(props) {
     flash_store
       .deleteAll()
       .then(() => {
-        AppContext.deleteAll();
+        FlashcardService.deleteAll();
         store.set(store.FLASHCARDS, []);
         setNewFlashcardName("");
         saveOrdering();
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }
 
   const moveFlashcard = useCallback(

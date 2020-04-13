@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import flash_store from "./FlashStore";
+import flash_store from "./FlashcardStoreDAO";
 
 let topStyles = {
   textAlign: "right"

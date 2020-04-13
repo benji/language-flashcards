@@ -3,7 +3,7 @@ import { useState } from "react";
 const self = {
   // dataKey -> data object
   data: {},
-  // dataKey -> react setter callback
+  // dataKey -> react setter callbacks
   reactSetterCallback: {}
 };
 
@@ -44,6 +44,10 @@ self.useState = function() {
     console.log("Calling react useState", dataKey);
     self.reactSetterCallback[dataKey] = getReactSetterCallback(dataKey)();
   }
+};
+
+self.update = (dataKey, createNewObjectFn) => {
+  self.set(dataKey, createNewObjectFn(self.get(dataKey)));
 };
 
 export default self;

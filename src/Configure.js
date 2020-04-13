@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-import flash_store from "./FlashStore";
+import flash_store from "./services/FlashcardStoreDAO";
 import _OneStore from "onestore-client-node";
 import SelectLanguage from "./SelectLanguage";
-import AppContext from "./AppContext";
 import Utils from "./Utils";
 import store from "./services/FlashcardStore";
+import FlashcardService from "./services/FlashcardService";
 
 const saveButtonStyles = {
   float: "right"
@@ -45,7 +45,7 @@ function Configure(props) {
         setToLanguage("");
         Utils.goto(props, "/flashcards");
       })
-      .catch(AppContext.handleError);
+      .catch(Utils.handleError);
   }
 
   return (
