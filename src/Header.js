@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useContext } from "react";
-import { Link,withRouter } from "react-router-dom";
+import React from "react";
+import { Link, withRouter } from "react-router-dom";
 import flash_store from "./FlashStore";
-import AppContext from "./AppContext";
 import { faSignOutAlt, faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import store from "./services/FlashcardStore";
 
 function logout() {
   flash_store.onestore.deauthenticate();
@@ -21,9 +21,12 @@ const linkStyle = {
 };
 
 function Header(props) {
+  console.log("--Header--");
+  store.useState(store.APP_CONFIG);
+
   return (
     <div style={styles}>
-      {props.configuration ? (
+      {store.get(store.APP_CONFIG) ? (
         <Link to="/configure" style={linkStyle}>
           <FontAwesomeIcon icon={faSlidersH} className="l-icon-action" />
         </Link>

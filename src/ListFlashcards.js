@@ -15,11 +15,14 @@ import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
 import update from "immutability-helper";
 import flash_store from "./FlashStore";
 
-function ListFlashcards(props) {
-  const [flashcards, setFlashcards] = useState([]);
-  const [newFlashcardName, setNewFlashcardName] = useState("");
-  const [draggedId, setDraggedId] = useState(null);
+import store from "./services/FlashcardStore";
 
+function ListFlashcards(props) {
+  console.log("--ListFlashcards--");
+
+  store.useState(store.FLASHCARDS, store.DRAGGED_FLASHCARD_ID);
+
+  const [newFlashcardName, setNewFlashcardName] = useState("");
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
 
   let orderConfig;
@@ -53,7 +56,7 @@ function ListFlashcards(props) {
           return getOrder(a.id) - getOrder(b.id);
         });
 
-        setFlashcards(_flashcards);
+        store.set(store.FLASHCARDS, _flashcards);
 
         if (orderingChanged()) {
           saveOrdering();
@@ -63,15 +66,18 @@ function ListFlashcards(props) {
   }
 
   function orderingChanged() {
-    for (var i in flashcards) {
-      if (!orderConfig[i] || orderConfig[i].id !== flashcards[i].id) {
+    for (var i in store.get(store.FLASHCARDS)) {
+      if (
+        !orderConfig[i] ||
+        orderConfig[i].id !== store.get(store.FLASHCARDS)[i].id
+      ) {
         return true;
       }
     }
   }
 
   function saveOrdering() {
-    orderConfig = flashcards.map(f => {
+    orderConfig = store.get(store.FLASHCARDS).map(f => {
       return { id: f.id, name: f.userdata.name };
     });
 
@@ -96,7 +102,10 @@ function ListFlashcards(props) {
             .then(id => {
               var flashcard = { id: id, userdata: userdata };
               AppContext.addFlashcard(flashcard);
-              setFlashcards([flashcard, ...flashcards]);
+              store.set(store.FLASHCARDS, [
+                flashcard,
+                ...store.get(store.FLASHCARDS)
+              ]);
               setNewFlashcardName("");
               saveOrdering();
             })
@@ -128,7 +137,7 @@ function ListFlashcards(props) {
       .deleteAll()
       .then(() => {
         AppContext.deleteAll();
-        setFlashcards([]);
+        store.set(store.FLASHCARDS, []);
         setNewFlashcardName("");
         saveOrdering();
       })
@@ -137,14 +146,15 @@ function ListFlashcards(props) {
 
   const moveFlashcard = useCallback(
     (dragIndex, hoverIndex) => {
-      const dragFlashcard = flashcards[dragIndex];
-      setFlashcards(
-        update(flashcards, {
+      const dragFlashcard = store.get(store.FLASHCARDS)[dragIndex];
+      store.set(
+        store.FLASHCARDS,
+        update(store.get(store.FLASHCARDS), {
           $splice: [[dragIndex, 1], [hoverIndex, 0, dragFlashcard]]
         })
       );
     },
-    [flashcards]
+    [store.get(store.FLASHCARDS)]
   );
 
   const HTML5toTouch = {
@@ -163,6 +173,10 @@ function ListFlashcards(props) {
     ]
   };
 
+  function _setDraggedId(id) {
+    store.set(store.DRAGGED_FLASHCARD_ID, id);
+  }
+
   return (
     <React.Fragment>
       <h3>Flashcards</h3>
@@ -171,7 +185,7 @@ function ListFlashcards(props) {
         {" "}
         <DndProvider backend={MultiBackend} options={HTML5toTouch}>
           <ul className="flashcards">
-            {flashcards.map((f, index) => {
+            {store.get(store.FLASHCARDS).map((f, index) => {
               return (
                 <FlashcardListItem
                   key={f.id}
@@ -180,8 +194,6 @@ function ListFlashcards(props) {
                   flashcardName={f.userdata.name}
                   moveFlashcard={moveFlashcard}
                   onDropFlashcard={saveOrdering}
-                  setDraggedId={setDraggedId}
-                  draggedId={draggedId}
                 />
               );
             })}

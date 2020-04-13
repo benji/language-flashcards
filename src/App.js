@@ -1,6 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Container from "react-bootstrap/Container";
 
 import flash_store from "./FlashStore";
 import _OneStore from "onestore-client-node";
@@ -13,24 +12,18 @@ import AppContext from "./AppContext";
 import Error from "./Error";
 import NotFound from "./NotFound";
 import PlayFlashcard from "./PlayFlashcard";
+import store from "./services/FlashcardStore";
 
-import logo from "./logo.svg";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.scss";
 import "./AppCustom.scss";
 
 function App() {
-  console.log("App()");
-  const [authenticated, setAuthenticated] = useState(false);
-  const [configuration, setConfiguration] = useState();
-  const [ready, setReady] = useState(false);
-  const [error, setError] = useState();
+  console.log("--FlashcardListItem--");
 
-  AppContext.handleError = function(e) {
-    console.error(e);
-    setReady(true);
-    setError(e);
-  };
+  store.useState(store.APP_CONFIG, store.IS_READY, store.ERROR);
+
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     flash_store.load(auth => {
@@ -41,21 +34,20 @@ function App() {
           .then(c => {
             console.log("configuration received:");
             console.log(c);
-            AppContext.configuration = c ? c.userdata : {};
-            setConfiguration(c);
-            setReady(true);
+            store.set(store.APP_CONFIG, c ? c.userdata : null);
+            store.set(store.IS_READY, true);
           })
           .catch(AppContext.handleError);
       } else {
-        setReady(true);
+        store.set(store.IS_READY, true);
       }
     });
   }, []); // run only once
 
   function renderMe() {
-    if (error) return <Error error={error} />;
+    if (store.get(store.ERROR)) return <Error error={store.get(store.ERROR)} />;
     if (!authenticated) return <OneStoreLogin />;
-    if (!configuration) return <Configure />;
+    if (!store.get(store.APP_CONFIG)) return <Configure />;
     return (
       <>
         <Switch>
@@ -80,12 +72,9 @@ function App() {
 
   return (
     <div className="App">
-      {ready ? (
+      {store.get(store.IS_READY) ? (
         <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
-          <Header
-            isAuthenticated={authenticated}
-            configuration={configuration}
-          />
+          <Header isAuthenticated={authenticated} />
           <div className="content-fullpage">{renderMe()}</div>
         </BrowserRouter>
       ) : (

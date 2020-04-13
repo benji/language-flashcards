@@ -1,7 +1,5 @@
-import React, { useState, useRef, Component } from "react";
+import React from "react";
 import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
-import Button from "react-bootstrap/Button";
 
 import LanguagesService from "./LanguagesService";
 
@@ -9,9 +7,8 @@ const AllLanguages = LanguagesService.AllLanguages;
 const AllLanguagesKeys = Object.keys(LanguagesService.AllLanguages);
 
 function SelectLanguage(props) {
-
   function handleChange(e) {
-    props.setValue(e.target.value)
+    props.setValue(e.target.value);
   }
 
   return (

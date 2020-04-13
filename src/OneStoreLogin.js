@@ -1,8 +1,6 @@
-import React, { useState, useRef, Component } from "react";
-import ReactDOM from "react-dom";
+import React from "react";
 import flash_store from "./FlashStore";
 import _OneStore from "onestore-client-node";
-import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 
 function OneStoreLogin(props) {

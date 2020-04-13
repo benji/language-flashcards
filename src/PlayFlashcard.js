@@ -5,6 +5,7 @@ import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 
 import "./PlayFashcard.scss";
+import store from "./services/FlashcardStore";
 
 var flashcardEntries;
 var index = 0;
@@ -38,8 +39,9 @@ function PlayFlashcard(props) {
   function renderCurrentEntry() {
     console.log("rendering current entry ", index, showAnswer);
     const entry = flashcardEntries[index % flashcardEntries.length];
-    setQuestion(AppContext.fromto ? entry.userdata.from : entry.userdata.to);
-    setAnswer(AppContext.fromto ? entry.userdata.to : entry.userdata.from);
+    const fromto = store.get(store.FROMTO);
+    setQuestion(fromto ? entry.userdata.from : entry.userdata.to);
+    setAnswer(fromto ? entry.userdata.to : entry.userdata.from);
     setPronouciation(entry.userdata.p);
   }
 

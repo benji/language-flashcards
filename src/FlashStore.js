@@ -1,8 +1,5 @@
 import util from "util";
-import React, { useState, useContext } from "react";
 import _OneStore from "onestore-client-node";
-import AppContext from "./AppContext";
-import App from "./App";
 
 const store_configuration = "Configuration";
 const store_flashcards = "Flashcards";

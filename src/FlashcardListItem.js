@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { withRouter } from "react-router";
 import Utils from "./Utils";
 import { useDrag, useDrop } from "react-dnd";
@@ -7,18 +7,22 @@ import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./ListFlashcards.scss";
 
+import store from "./services/FlashcardStore";
+
 const FLASHCARD_TYPE = "FLASHCARD";
 
 function FlashcardListItem(props) {
+  console.log("--FlashcardListItem--");
   const ref = useRef(null);
+
+  //store.useState(store.DRAGGED_FLASHCARD_ID);
 
   const [, drop] = useDrop({
     accept: FLASHCARD_TYPE,
 
     drop(item, monitor) {
       props.onDropFlashcard();
-      console.log("DROP -> setDraggedId to null");
-      props.setDraggedId(null);
+      store.set(store.DRAGGED_FLASHCARD_ID, null);
     },
 
     hover(item, monitor) {
@@ -74,23 +78,22 @@ function FlashcardListItem(props) {
   let onMouseDownTimeout = null;
 
   const onMouseDown = id => () => {
-    //alert("MOUSEDOWN");
     onMouseDownTimeout = setTimeout(() => {
       console.log("onMouseDown -> setDraggedId to " + id);
-      props.setDraggedId(id);
+      store.set(store.DRAGGED_FLASHCARD_ID, id);
     }, 100);
   };
   const onMouseUp = id => () => {
     console.log("onMouseUp -> setDraggedId to null");
     clearInterval(onMouseDownTimeout);
-    props.setDraggedId(null);
+    store.set(store.DRAGGED_FLASHCARD_ID, null);
   };
 
   const classNames = [];
-  if (props.draggedId == props.flashcardId) {
+  if (store.get(store.DRAGGED_FLASHCARD_ID) == props.flashcardId) {
     classNames.push("flashcardDragged");
   }
-  if (props.draggedId === null) {
+  if (store.get(store.DRAGGED_FLASHCARD_ID) === null) {
     classNames.push("noOngoingDrag");
   }
 

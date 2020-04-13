@@ -1,5 +1,4 @@
-import React, { useState, useRef, Component } from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from "react";
 import flash_store from "./FlashStore";
 
 let topStyles = {
@@ -7,7 +6,7 @@ let topStyles = {
 };
 
 let containerStyles = {
-  display: "inline-block",
+  display: "inline-block"
 };
 
 export class OneStoreWidget extends Component {

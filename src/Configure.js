@@ -1,29 +1,28 @@
-import React, { useState, useRef } from "react";
-import { Link, withRouter } from "react-router-dom";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
-import InputGroup from "react-bootstrap/InputGroup";
 
 import flash_store from "./FlashStore";
 import _OneStore from "onestore-client-node";
 import SelectLanguage from "./SelectLanguage";
 import AppContext from "./AppContext";
 import Utils from "./Utils";
+import store from "./services/FlashcardStore";
 
 const saveButtonStyles = {
   float: "right"
 };
 
 const formStyles = {
-  marginTop:"1em"
-}
+  marginTop: "1em"
+};
 
 function Configure(props) {
-  console.log("Configure()");
-  console.log(AppContext.configuration);
+  console.log("--Configure--");
 
-  const c = AppContext.configuration;
+  store.useState(store.APP_CONFIG);
+
+  const c = store.get(store.APP_CONFIG);
   const [fromLanguage, setFromLanguage] = useState(c ? c.from : "");
   const [toLanguage, setToLanguage] = useState(c ? c.to : "");
 
@@ -40,8 +39,8 @@ function Configure(props) {
     flash_store
       .saveConfiguration(configuration)
       .then(id => {
-        AppContext.configuration = c;
         configuration.id = id;
+        store.set(store.APP_CONFIG, configuration);
         setFromLanguage("");
         setToLanguage("");
         Utils.goto(props, "/flashcards");
