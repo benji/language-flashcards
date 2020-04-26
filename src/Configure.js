@@ -7,7 +7,6 @@ import _OneStore from "onestore-client-node";
 import SelectLanguage from "./SelectLanguage";
 import Utils from "./Utils";
 import store from "./services/FlashcardStore";
-import FlashcardService from "./services/FlashcardService";
 
 const saveButtonStyles = {
   float: "right"

@@ -4,10 +4,13 @@ import flash_store from "./services/FlashcardStoreDAO";
 import { faSignOutAlt, faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import store from "./services/FlashcardStore";
+import Utils from "./Utils";
 
-function logout() {
+const logout = props => () => {
   flash_store.onestore.deauthenticate();
-}
+  store.set(store.AUTHENTICATED, false);
+  Utils.goto(props, "/");
+};
 
 const styles = {
   padding: "15px 10px 0 0",
@@ -31,7 +34,7 @@ function Header(props) {
           <Link to="/configure" style={linkStyle}>
             <FontAwesomeIcon icon={faSlidersH} className="l-icon-action" />
           </Link>
-          <a onClick={logout} className="headerLink" style={linkStyle}>
+          <a onClick={logout(props)} className="headerLink" style={linkStyle}>
             <FontAwesomeIcon
               icon={faSignOutAlt}
               className="l-icon-action"

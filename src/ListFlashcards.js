@@ -7,7 +7,6 @@ import FlashcardService from "./services/FlashcardService";
 import FlashcardListItem from "./FlashcardListItem";
 import "./ListFlashcards.scss";
 import { DndProvider } from "react-dnd";
-import RingLoader from "react-spinners/RingLoader";
 import Utils from "./Utils";
 
 import HTML5Backend from "react-dnd-html5-backend";
@@ -18,6 +17,7 @@ import update from "immutability-helper";
 import flash_store from "./services/FlashcardStoreDAO";
 
 import store from "./services/FlashcardStore";
+import Spinner from "./common/Spinner";
 
 function ListFlashcards(props) {
   console.log("--ListFlashcards--");
@@ -179,20 +179,11 @@ function ListFlashcards(props) {
     ]
   };
 
-  const spinnerCss = {
-    margin: "3em auto"
-  };
-
   return (
     <React.Fragment>
       <h3>Flashcards</h3>
 
-      <RingLoader
-        size={150}
-        color={"#ec82ae"}
-        loading={loading}
-        css={spinnerCss}
-      />
+      <Spinner loading={loading} />
 
       <div className="fcRow ListFlashcards">
         {" "}

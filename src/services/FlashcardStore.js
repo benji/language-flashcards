@@ -9,6 +9,8 @@ const self = {
   FROMTO: "fromto",
   FLASHCARD_ENTRIES: "flashcard-entries",
   FLASHCARDS_ARRAY: "flashcards-array",
+  AUTHENTICATED: "authenticated",
+  AUTHENTICATING: "authenticating",
 
   ...ReactGlobalState
 };
@@ -21,5 +23,7 @@ self.set(self.IS_READY, false);
 self.set(self.ERROR, null);
 self.set(self.FLASHCARD_ENTRIES, {});
 self.set(self.FLASHCARDS_ARRAY, null);
+self.set(self.AUTHENTICATED, false);
+self.set(self.AUTHENTICATING, false);
 
 export default self;

@@ -8,7 +8,7 @@ import FlashcardService from "./services/FlashcardService";
 import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 import LanguagesService from "./LanguagesService";
-import RingLoader from "react-spinners/RingLoader";
+import Spinner from "./common/Spinner";
 
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
@@ -143,10 +143,6 @@ function Flashcard(props) {
       .catch(Utils.handleError);
   }
 
-  const spinnerCss = {
-    margin: "3em auto"
-  };
-
   return (
     <React.Fragment>
       <PageTitle title={flashcardName} backLink={"/flashcards"} />
@@ -203,12 +199,7 @@ function Flashcard(props) {
       <div className="fcRow row3">
         <label>Entries</label>
 
-        <RingLoader
-          size={150}
-          color={"#ec82ae"}
-          loading={loading}
-          css={spinnerCss}
-        />
+        <Spinner loading={loading} />
 
         <div className="ListflashcardEntries">
           {flashcardEntries.length == 0 ? (

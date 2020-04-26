@@ -8,7 +8,6 @@ import ListFlashcards from "./ListFlashcards";
 import Flashcard from "./Flashcard";
 import OneStoreLogin from "./OneStoreLogin";
 import Header from "./Header";
-import FlashcardService from "./services/FlashcardService";
 import Error from "./Error";
 import NotFound from "./NotFound";
 import PlayFlashcard from "./PlayFlashcard";
@@ -20,15 +19,18 @@ import "./App.scss";
 import "./AppCustom.scss";
 
 function App() {
-  console.log("--FlashcardListItem--");
+  console.log("--App--");
 
-  store.useState(store.APP_CONFIG, store.IS_READY, store.ERROR);
-
-  const [authenticated, setAuthenticated] = useState(false);
+  store.useState(
+    store.APP_CONFIG,
+    store.IS_READY,
+    store.ERROR,
+    store.AUTHENTICATED
+  );
 
   useEffect(() => {
     flash_store.load(auth => {
-      setAuthenticated(auth);
+      store.set(store.AUTHENTICATED, auth);
       if (auth) {
         flash_store
           .getConfiguration()
@@ -42,12 +44,13 @@ function App() {
       } else {
         store.set(store.IS_READY, true);
       }
+      store.set(store.AUTHENTICATING, false);
     });
   }, []); // run only once
 
   function renderMe() {
     if (store.get(store.ERROR)) return <Error error={store.get(store.ERROR)} />;
-    if (!authenticated) return <OneStoreLogin />;
+    if (!store.get(store.AUTHENTICATED)) return <OneStoreLogin />;
     if (!store.get(store.APP_CONFIG)) return <Configure />;
     return (
       <>
@@ -75,7 +78,7 @@ function App() {
     <div className="App">
       {store.get(store.IS_READY) ? (
         <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
-          <Header isAuthenticated={authenticated} />
+          <Header isAuthenticated={store.get(store.AUTHENTICATED)} />
           <div className="content-fullpage">{renderMe()}</div>
         </BrowserRouter>
       ) : (
