@@ -1,6 +1,7 @@
 {
   "name": "language-flashcards",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "homepage": "https://benji.github.io/language-flashcards/",
   "dependencies": {
@@ -24,6 +25,7 @@
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.0",
+    "react-spinners": "^0.8.1",
     "react-super-responsive-table": "^5.1.1"
   },
   "scripts": {
@@ -46,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "requirejs": "^2.3.6"
   }
 }

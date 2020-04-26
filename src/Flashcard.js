@@ -8,6 +8,7 @@ import FlashcardService from "./services/FlashcardService";
 import PageTitle from "./PageTitle";
 import Utils from "./Utils";
 import LanguagesService from "./LanguagesService";
+import RingLoader from "react-spinners/RingLoader";
 
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
@@ -25,6 +26,7 @@ function Flashcard(props) {
   console.log("--Flashcard--");
   const flashcardName = props.match.params.flashcard_name;
 
+  const [loading, setLoading] = useState(true);
   const [flashcardEntries, setflashcardEntries] = useState([]);
   const [newEntryFrom, setNewEntryFrom] = useState("");
   const [newEntryTo, setNewEntryTo] = useState("");
@@ -37,6 +39,7 @@ function Flashcard(props) {
         console.log(entries);
         if (entries) setflashcardEntries([...entries]);
         else setflashcardEntries([]);
+        setLoading(false);
       })
       .catch(Utils.handleError);
   }, []); // only once
@@ -54,7 +57,15 @@ function Flashcard(props) {
       .then(id => {
         var entry = { id: id, userdata: userdata };
         setflashcardEntries([...flashcardEntries, entry]);
-        FlashcardService.flashcardEntries[flashcardName].push(entry);
+        store.update(store.FLASHCARD_ENTRIES, entries => {
+          const newEntries = { ...entries };
+          if (!flashcardName in newEntries) {
+            newEntries[flashcardName] = [];
+          }
+          newEntries[flashcardName].push(entry);
+          return newEntries;
+        });
+        //FlashcardService.flashcardEntries[flashcardName].push(entry);
         setNewEntryFrom("");
         setNewEntryTo("");
         setNewEntryPronounciation("");
@@ -132,6 +143,10 @@ function Flashcard(props) {
       .catch(Utils.handleError);
   }
 
+  const spinnerCss = {
+    margin: "3em auto"
+  };
+
   return (
     <React.Fragment>
       <PageTitle title={flashcardName} backLink={"/flashcards"} />
@@ -187,6 +202,14 @@ function Flashcard(props) {
 
       <div className="fcRow row3">
         <label>Entries</label>
+
+        <RingLoader
+          size={150}
+          color={"#ec82ae"}
+          loading={loading}
+          css={spinnerCss}
+        />
+
         <div className="ListflashcardEntries">
           {flashcardEntries.length == 0 ? (
             <>No entries yet</>

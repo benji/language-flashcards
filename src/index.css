@@ -32,3 +32,7 @@ code {
 .choices {
   text-decoration: underline;
 }
+
+.sweet-loading {
+  margin: 0 auto;
+}

@@ -1,12 +1,20 @@
 
-BATCH LOAD:
-use same API for batch loading
-load order first and FCs on demand
-
-
   -> backend: meta store that saves the order
     -> list = load meta only
     -> click -> load actual flashcard!
 
 - save / backup?
+
+
+
+Save all entries in 1 record?
+  1 expr = 10-30
+  1 entry = 20-60
+  say 50/entry on avg
+
+  5120/50 -> 102 entries 
+
+  limit to 80/80 chars?
+
+when reach MAX(5K) - 100*2 -> disallow adding new entries
 

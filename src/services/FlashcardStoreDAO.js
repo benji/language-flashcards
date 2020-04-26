@@ -60,7 +60,8 @@ self.saveFlashcardsOrdering = self.saveConfigurationItem(
 
 self.listFlashcards = function() {
   try {
-    return self._listP()(store_flashcards, { limit: 1000 });
+    var opts = { limit: 1000, maxRequests: 20 };
+    return self._listP()(store_flashcards, opts);
   } catch (e) {
     return Promise.reject(new Error(e));
   }
@@ -187,7 +188,6 @@ self._listP = function() {
   return util.promisify(self.onestore.list.bind(self.onestore));
 };
 self._createP = function() {
-  console.trace("_createP");
   return util.promisify(self.onestore.create.bind(self.onestore));
 };
 self._updateP = function() {

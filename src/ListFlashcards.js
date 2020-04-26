@@ -7,6 +7,7 @@ import FlashcardService from "./services/FlashcardService";
 import FlashcardListItem from "./FlashcardListItem";
 import "./ListFlashcards.scss";
 import { DndProvider } from "react-dnd";
+import RingLoader from "react-spinners/RingLoader";
 import Utils from "./Utils";
 
 import HTML5Backend from "react-dnd-html5-backend";
@@ -23,6 +24,7 @@ function ListFlashcards(props) {
 
   store.useState(store.FLASHCARDS, store.DRAGGED_FLASHCARD_ID);
 
+  const [loading, setLoading] = useState(true);
   const [newFlashcardName, setNewFlashcardName] = useState("");
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
 
@@ -59,6 +61,7 @@ function ListFlashcards(props) {
         });
 
         store.set(store.FLASHCARDS, _flashcards);
+        setLoading(false);
 
         if (orderingChanged()) {
           saveOrdering();
@@ -176,13 +179,20 @@ function ListFlashcards(props) {
     ]
   };
 
-  function _setDraggedId(id) {
-    store.set(store.DRAGGED_FLASHCARD_ID, id);
-  }
+  const spinnerCss = {
+    margin: "3em auto"
+  };
 
   return (
     <React.Fragment>
       <h3>Flashcards</h3>
+
+      <RingLoader
+        size={150}
+        color={"#ec82ae"}
+        loading={loading}
+        css={spinnerCss}
+      />
 
       <div className="fcRow ListFlashcards">
         {" "}
